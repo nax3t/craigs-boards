@@ -1,8 +1,4 @@
+/* Move down content because we have a fixed navbar that is 3.5rem tall */
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
-}
-
-a {
-  color: #00B7FF;
+  padding-top: 3.5rem;
 }

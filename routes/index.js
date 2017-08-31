@@ -14,14 +14,14 @@ router.get('/signup', function(req, res) {
 router.post('/signup', function(req, res) {
 	var newUser = new User({username: req.body.username, email: req.body.email});
 	User.register(newUser, req.body.password, function(err, user){
-	    if(err){
-	    		// return out of callback and render the signupview with 
-	    		// error message as flash and prefilled form inputs for username and email
-	        return res.render('users/signup', {error: err.message, username: req.body.username, email: req.body.email});
-	    }
-	    passport.authenticate('local')(req, res, function(){
-	       res.redirect('/'); 
-	    });
+	  if(err){
+			// return out of callback and render the signupview with 
+			// error message as flash and prefilled form inputs for username and email
+	    return res.render('users/signup', {error: err.message, username: req.body.username, email: req.body.email});
+	  }
+	  passport.authenticate('local')(req, res, function(){
+			res.redirect('/'); 
+	  });
 	});
 });
 
@@ -30,15 +30,17 @@ router.get('/login', function(req, res) {
 });
 
 router.post('/login', passport.authenticate('local', 
-    {
-        successRedirect: '/',
-        failureRedirect: '/login'
-    }), function(req, res){
+  {
+    successRedirect: '/',
+    failureRedirect: '/login',
+    successFlash: true,
+    failureFlash: true
+  }), function(req, res){
 });
 
 router.get('/logout', function(req, res){
-   req.logout();
-   res.redirect('/');
+ req.logout();
+ res.redirect('/');
 });
 
 module.exports = router;

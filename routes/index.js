@@ -33,13 +33,14 @@ router.post('/login', passport.authenticate('local',
   {
     successRedirect: '/',
     failureRedirect: '/login',
-    successFlash: true,
+    successFlash: 'Welcome to Craig\'s Boards!',
     failureFlash: true
   }), function(req, res){
 });
 
 router.get('/logout', function(req, res){
  req.logout();
+ req.flash('success', 'See you next time!');
  res.redirect('/');
 });
 

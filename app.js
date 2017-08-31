@@ -8,7 +8,7 @@ const flash = require('connect-flash');
 const session = require('express-session');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const LocalStrategy = require("passport-local");
+const LocalStrategy = require("passport-local").Strategy;
 const methodOverride = require("method-override");
 const engine = require('ejs-mate');
 const User = require('./models/user');
@@ -59,6 +59,12 @@ app.use(function(req, res, next){
    res.locals.currentUser = req.user;
    res.locals.error = req.flash("error");
    res.locals.success = req.flash("success");
+   // assign local variable page so we don't have to test
+   // if page exists (is not undefined) in the nav partial
+   res.locals.page = '';
+   // define default title if no title is assigned in res.render()
+   res.locals.title = 'Craig\'s Boards';
+   
    next();
 });
 
@@ -83,7 +89,6 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-
   // render the error page
   res.status(err.status || 500);
   res.render('error');

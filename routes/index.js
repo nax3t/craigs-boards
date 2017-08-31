@@ -4,19 +4,20 @@ const passport = require('passport');
 const User = require('../models/user');
 
 router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+  res.render('index', { title: 'Express', page: 'home' });
 });
 
 router.get('/signup', function(req, res) {
-  res.render('users/signup', {title: 'User Signup'});
+  res.render('users/signup', {title: 'User Sign-up', username: '', email: ''});
 });
 
 router.post('/signup', function(req, res) {
 	var newUser = new User({username: req.body.username, email: req.body.email});
 	User.register(newUser, req.body.password, function(err, user){
 	    if(err){
-	        console.log(err);
-	        return res.render('users/signup');
+	    		// return out of callback and render the signupview with 
+	    		// error message as flash and prefilled form inputs for username and email
+	        return res.render('users/signup', {error: err.message, username: req.body.username, email: req.body.email});
 	    }
 	    passport.authenticate('local')(req, res, function(){
 	       res.redirect('/'); 

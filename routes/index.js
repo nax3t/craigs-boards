@@ -8,7 +8,7 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/signup', function(req, res) {
-  res.render('users/signup', {title: 'User Sign-up', username: '', email: ''});
+  res.render('users/signup', {title: 'User Sign-up', page: 'signup', username: '', email: ''});
 });
 
 router.post('/signup', function(req, res) {
@@ -26,16 +26,25 @@ router.post('/signup', function(req, res) {
 });
 
 router.get('/login', function(req, res) {
-	res.render('users/login', {title: 'User Login'});
+	res.render('users/login', {title: 'User Login', page: 'login'});
 });
 
-router.post('/login', passport.authenticate('local', 
-  {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    successFlash: 'Welcome to Craig\'s Boards!',
-    failureFlash: true
-  }), function(req, res){
+//handling login logic
+router.post('/login', function(req, res, next) {
+  passport.authenticate('local', function(err, user, info) {
+    if (err) { return next(err); }
+    if (!user) { 
+    	req.flash('error', 'Incorrect username or password')
+    	return res.redirect('/login');
+    }
+    req.logIn(user, function(err) {
+      if (err) { return next(err); }
+      var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/';
+      delete req.session.redirectTo;
+      req.flash('success', 'Successfully logged in!');
+      res.redirect(redirectTo);
+    });
+  })(req, res, next);
 });
 
 router.get('/logout', function(req, res){

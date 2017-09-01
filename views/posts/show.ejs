@@ -1,2 +1,9 @@
 <% layout('layouts/boilerplate') -%>
 
+<div class="row">
+	<div class="col-md-4 col-offset-4">
+		<h1><%= post.title%></h1>
+		<p><%- post.description %></p>
+		<p>Posted by: <%= post.author.username %> <%= moment(post.createdAt).fromNow() %></p>
+	</div>
+</div>

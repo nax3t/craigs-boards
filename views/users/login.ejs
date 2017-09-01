@@ -1,11 +1,16 @@
 <% layout('layouts/boilerplate') -%>
 
-<form action="/login" method="POST">
-	<label for="username">Username:</label>
-	<input id="username" name="username" type="text" required>
-
-	<label for="password">Password:</label>
-	<input type="password" id="password" name="password" required>
-
-	<input type="submit" value="Log in!">
+<form class="form-signin" action="/login" method="POST">
+  <h2 class="form-signin-heading">Please sign in</h2>
+  <label for="inputUsername" class="sr-only">Username</label>
+  <input type="text" id="inputUsername" class="form-control" name="username" placeholder="Username" required autofocus>
+  <label for="inputPassword" class="sr-only">Password</label>
+  <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required>
+<!-- Should we use a remember me button to extend the expiry? -->
+<!--   <div class="checkbox">
+    <label>
+      <input type="checkbox" value="remember-me"> Remember me
+    </label>
+  </div> -->
+  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 </form>

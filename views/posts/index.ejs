@@ -1,2 +1,22 @@
 <% layout('layouts/boilerplate') -%>
 
+<div class="row">
+	<div class="col-md-12">
+		<a href="/posts/new" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New Post</a>
+	</div>
+</div>
+
+<div class="row">
+	<% posts.forEach(function(post) { %>
+	<div class="col-md-4">
+		<div class="card" style="width: 20rem;">
+		  <img class="card-img-top" src="https://source.unsplash.com/random" alt="Card image cap">
+		  <div class="card-body">
+		    <h4 class="card-title"><%= post.title %></h4>
+		    <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
+		    <a href="/posts/<%= post.id %>" class="btn btn-primary">View Board</a>
+		  </div>
+		</div>
+	</div>
+	<% }); %>
+</div>

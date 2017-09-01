@@ -6,6 +6,7 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const flash = require('connect-flash');
 const session = require('express-session');
+const expressSanitizer = require("express-sanitizer");
 const mongoose = require('mongoose');
 const passport = require('passport');
 const LocalStrategy = require("passport-local").Strategy;
@@ -40,8 +41,11 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(expressSanitizer());
 app.use(methodOverride("_method"));
 app.use(flash());
+//require moment
+app.locals.moment = require('moment');
 
 // PASSPORT CONFIGURATION
 app.use(require('express-session')({
@@ -74,7 +78,7 @@ app.use(function(req, res, next){
 });
 
 app.use('/', index);
-// app.use('/posts', posts);
+app.use('/posts', posts);
 // app.use('/posts/:id/comments', comments);
 
 // catch 404 and forward to error handler

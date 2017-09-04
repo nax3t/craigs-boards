@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const User = require('../models/user');
+const middleware = require('../middleware');
+const { asyncMiddleware, isLoggedIn } = middleware;
 
 router.get('/', (req, res, next) => {
   res.render('index', { title: 'Express', page: 'home' });
@@ -51,6 +53,12 @@ router.post('/login', (req, res, next) => {
     });
   })(req, res, next);
 });
+
+router.get('/profile', isLoggedIn, asyncMiddleware(async (req, res, next) => {
+  // // use currentUser unless need more info about user
+  // let user = User.findById(req.user._id);
+  res.render('users/profile', {title: 'User Profile'});
+}));
 
 router.get('/logout', (req, res) => {
  req.logout();

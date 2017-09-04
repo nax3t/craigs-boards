@@ -2,3 +2,8 @@
 body {
   padding-top: 4.5rem;
 }
+
+/* Make delete forms inline-block */
+.delete-form {
+	display: inline-block;
+}

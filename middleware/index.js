@@ -19,5 +19,11 @@ module.exports = {
 			req.body.post.description = req.sanitize(req.body.post.description);
 		}
 		next();
+	},
+	checkPostOwner: (req, res, next, post) => {
+		if(!post.author._id.equals(req.user._id)) {
+			req.flash('error', 'You\'re not the owner of this post.');
+			return res.redirect('/');
+		};
 	}
 }

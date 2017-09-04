@@ -16,4 +16,10 @@ const PostSchema = new Schema({
 	createdAt: { type: Date, default: Date.now }
 });
 
+// pre-hook middleware to populate author in post show route
+PostSchema.pre('findOne', function(next) {
+  this.populate('author');
+  next();
+});
+
 module.exports = mongoose.model('Post', PostSchema);

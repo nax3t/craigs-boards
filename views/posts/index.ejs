@@ -10,7 +10,7 @@
 	<% posts.forEach(function(post) { %>
 	<div class="col-md-4">
 		<div class="card" style="width: 20rem;">
-		  <img class="card-img-top" src="https://source.unsplash.com/random" alt="Card image cap">
+		  <img class="card-img-top" src="https://images.unsplash.com/photo-1503604990565-e76f9d62ffca?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=e2af9f88771a0a6e5a90d80dc8a17ed7" alt="Card image cap">
 		  <div class="card-body">
 		    <h4 class="card-title"><%= post.title %></h4>
 		    <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>

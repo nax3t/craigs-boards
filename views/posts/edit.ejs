@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate') -%>
 
-<form action="/posts/<%= post.id %>?_method=PUT" method="POST">
+<form action="/posts/<%= post.id %>?_method=PUT" method="POST" enctype="multipart/form-data">
   <div class="form-group">
     <label for="inputTitle">Title</label>
     <input type="text" class="form-control" id="inputTitle" name="post[title]" value="<%= post.title %>" placeholder="Title">
@@ -32,7 +32,7 @@
   </div>
   <div class="form-group">
     <label for="inputImage">Image</label>
-    <input type="file" id="inputImage" name="post[image]">
+    <input type="file" id="inputImage" name="image">
   </div>
 
   <button type="submit" class="btn btn-default">Update</button>

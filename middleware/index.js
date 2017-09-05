@@ -1,3 +1,11 @@
+const Post = require('../models/post');
+const cloudinary = require('cloudinary');
+cloudinary.config({ 
+  cloud_name: 'craigsboards', 
+  api_key: process.env.CLOUDINARY_API_KEY, 
+  api_secret: process.env.CLOUDINARY_API_SECRET
+});
+
 module.exports = {
 	asyncMiddleware: fn =>
 	  (req, res, next) => {
@@ -20,10 +28,18 @@ module.exports = {
 		}
 		next();
 	},
-	checkPostOwner: (req, res, next, post) => {
-		if(!post.author._id.equals(req.user._id)) {
-			req.flash('error', 'You\'re not the owner of this post.');
-			return res.redirect('/');
-		};
+	checkPostOwner: async (req, res, next) => {
+		try {
+				let post = await Post.findById(req.params.id);
+				if(!post.author._id.equals(req.user._id)) {
+					req.flash('error', 'You\'re not the owner of this post.');
+					return res.redirect('/');
+				}
+				// should post go directly on req or maybe req.session?
+				req.post = post;
+				next();
+		} catch(err) {
+				return next(err);
+		}
 	}
 }

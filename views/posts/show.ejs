@@ -11,9 +11,11 @@
 				<p>Posted by: <%= post.author.username %> <%= moment(post.createdAt).fromNow() %></p>
 			</div>
 		</div>
+		<% if(currentUser && currentUser.equals(post.author)) { %>
 		<a class="btn btn-outline-warning" href="/posts/<%= post.id %>/edit" role="button">Edit</a>
 		<form action="/posts/<%= post.id %>?_method=DELETE" method="POST" class="delete-form">
 			<input type="submit" class="btn btn-outline-danger" value="Delete">
 		</form>
+		<% } %>
 	</div>
 </div>

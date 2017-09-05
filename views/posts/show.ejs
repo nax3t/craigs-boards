@@ -6,6 +6,7 @@
 			<img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>">
 			<div class="card-body">
 			  <h4 class="card-title"><%= post.title %></h4>
+			  <p>Price: $<%= post.price %>.00</p>
 			  <p class="card-text"><%- post.description %></p>
 				<p>Posted by: <%= post.author.username %> <%= moment(post.createdAt).fromNow() %></p>
 			</div>

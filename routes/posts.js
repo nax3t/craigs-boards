@@ -46,9 +46,14 @@ router.post('/', isLoggedIn, upload.single('image'), sanitizeBody, (req, res, ne
 	cloudinary.uploader.upload(req.file.path, async (result) => { 
 		req.body.post.author = req.user._id;
 		req.body.post.image = result.secure_url;
-		let post = await Post.create(req.body.post);
-		req.flash('success', 'Post created successfully!');
-	  res.redirect(`/posts/${post.id}`);
+		try {
+				let post = await Post.create(req.body.post);
+				req.flash('success', 'Post created successfully!');
+			  res.redirect(`/posts/${post.id}`);
+		} catch (err) {
+				// test this to be sure it works
+				return next(err);
+		}
 	});
 });
 
@@ -59,27 +64,34 @@ router.get('/:id', asyncMiddleware(async (req, res, next) => {
 }));
 
 // EDIT
-router.get('/:id/edit', isLoggedIn, asyncMiddleware(async (req, res, next) => {
-	let post = await Post.findById(req.params.id);
-	checkPostOwner(req, res, next, post);
+router.get('/:id/edit', isLoggedIn, checkPostOwner, (req, res) => {
+	let post = req.post;
   res.render('posts/edit', { title: post.title , page: 'edit-post', post: post });
-}));
+});
 
 // UPDATE
-router.put('/:id', isLoggedIn, asyncMiddleware(async (req, res, next) => {
-	// Best way to handle checkPostOwner middleware here?
-	let post = await Post.findByIdAndUpdate(req.params.id, req.body.post);
-	req.flash('success', 'Post successfully updated.');
-	res.redirect(`/posts/${post.id}`);
+router.put('/:id', isLoggedIn, upload.single('image'), sanitizeBody, asyncMiddleware(async (req, res, next) => {
+	// How to combine cb with async here to be DRY?
+	if(req.file) {
+			cloudinary.uploader.upload(req.file.path, async (result) => { 
+				req.body.post.image = result.secure_url;
+				let post = await Post.findByIdAndUpdate(req.params.id, req.body.post);
+				req.flash('success', 'Post successfully updated.');
+				res.redirect(`/posts/${post.id}`);
+			});
+	} else {
+			let post = await Post.findByIdAndUpdate(req.params.id, req.body.post);
+			req.flash('success', 'Post successfully updated.');
+			res.redirect(`/posts/${post.id}`);
+	}
 }));
 
 // DESTROY
-router.delete('/:id', isLoggedIn, asyncMiddleware(async (req, res, next) => {
-	let post = await Post.findById(req.params.id);
-	checkPostOwner(req, res, next, post);
+router.delete('/:id', isLoggedIn, checkPostOwner, (req, res) => {
+	post = req.post;
 	post.remove();
 	req.flash('success', 'Post successfully deleted.');
   res.redirect('/posts');
-}));
+});
 
 module.exports = router;

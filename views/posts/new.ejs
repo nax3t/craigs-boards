@@ -2,12 +2,12 @@
 
 <form action="/posts" method="POST" enctype="multipart/form-data">
   <div class="form-group">
-    <label for="inputTitle">Title</label>
-    <input type="text" class="form-control" id="inputTitle" name="post[title]" placeholder="Title" required>
+    <label for="input-title">Title</label>
+    <input type="text" class="form-control" id="input-title" name="post[title]" placeholder="Title" required>
   </div>
   <div class="form-group">
-    <label for="inputLocation">Location</label>
-    <input type="text" class="form-control" id="inputLocation" name="post[location]" placeholder="Location" required>
+    <label for="input-location">Location</label>
+    <input type="text" class="form-control" id="input-location" name="post[location]" placeholder="Location" required>
   </div>
   <div class="form-group">
   	<label for="selectCondition">Condition</label>
@@ -19,20 +19,20 @@
   	</select>
   </div>
   <div class="form-group">
-	  <label for="textareaBody">Description</label>
-	  <textarea class="form-control" rows="3" id="textareaBody" name="post[description]" placeholder="Description" required></textarea>
+	  <label for="textarea-body">Description</label>
+	  <textarea class="form-control" rows="3" id="textarea-body" name="post[description]" placeholder="Description" required></textarea>
   </div>
   <div class="form-group">
-    <label class="sr-only" for="exampleInputAmount">Price</label>
+    <label class="sr-only" for="input-amount">Price</label>
     <div class="input-group">
       <div class="input-group-addon">$</div>
-      <input type="text" class="form-control" id="exampleInputAmount" name="post[price]" placeholder="Price" required>
+      <input type="text" class="form-control" id="input-amount" name="post[price]" placeholder="Price" required>
       <div class="input-group-addon">.00</div>
     </div>
   </div>
   <div class="form-group">
-    <label for="inputImage">Image</label>
-    <input type="file" id="inputImage" name="image" accept="image/*" required>
+    <label for="input-image">Image</label>
+    <input type="file" id="input-image" name="image" accept="image/*" required>
   </div>
 
   <button type="submit" class="btn btn-default">Submit</button>

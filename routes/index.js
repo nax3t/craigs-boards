@@ -66,4 +66,19 @@ router.get('/logout', (req, res) => {
  res.redirect('/');
 });
 
+
+// secret route for quick login during development - REMOVE ME LATER
+router.get("/secret", function(req, res, next) {
+    req.body = {
+        username: "ian",
+        password: "password"
+    }
+    next();
+}, passport.authenticate("local", 
+    {
+        successRedirect: "/posts",
+        failureRedirect: "/login"
+    }), function(req, res) {
+});
+
 module.exports = router;

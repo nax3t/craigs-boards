@@ -16,6 +16,10 @@ module.exports = {
 	isLoggedIn: (req, res, next) => {
 	    // if user is authenticated in the session, carry on 
 	    if(req.isAuthenticated()) return next();
+	    // if request was sent via ajax then return json
+	    if(req.xhr) {
+	    	return res.json({'loginError': true});
+	    }
 	    // set redirectTo on session so user can go back to original destination after login
 	    req.session.redirectTo = req.originalUrl;
 	    // if they aren't redirect them to the login page

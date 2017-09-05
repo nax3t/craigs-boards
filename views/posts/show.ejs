@@ -17,5 +17,25 @@
 			<input type="submit" class="btn btn-outline-danger" value="Delete">
 		</form>
 		<% } %>
+		<% if(currentUser) { %>
+		<form action="/posts/<%= post.id %>/comments" method="POST" id="comment-form">
+			<div class="form-group">
+				<label for="comment-body">Comment</label>
+				<input type="text" id="comment-body" name="comment[body]" class="form-control" placeholder="Have any questions, <%= currentUser.username %>?" required>
+			</div>
+			<div class="form-group">	
+				<button type="submit" class="btn btn-default">Submit</button>
+			</div>
+		</form>
+		<% } %>
+		<h2>Comments</h2>
+		<div id="comments">
+		<% post.comments.forEach((comment)=> { %>
+			<p>
+				<span><%= comment.author.username %></span> - <strong><%= comment.body %></strong>
+			</p>
+			<hr>
+		<% }); %>
+		</div>
 	</div>
 </div>

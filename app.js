@@ -81,7 +81,7 @@ app.use(function(req, res, next){
 
 app.use('/', index);
 app.use('/posts', posts);
-// app.use('/posts/:id/comments', comments);
+app.use('/posts/:id/comments', comments);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -95,10 +95,10 @@ app.use(function(err, req, res, next) {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  // render the error page
   res.status(err.status || 500);
   req.flash('error', err.message);
   res.redirect('back');
+  // render the error page (took this out for now and changed to flash and redirect)
   // res.render('error');
 });
 

@@ -65,10 +65,24 @@ router.post('/', isLoggedIn, upload.single('image'), sanitizeBody, (req, res, ne
 });
 
 // SHOW
-router.get('/:id', asyncMiddleware(async (req, res, next) => {
-	let post = await Post.findById(req.params.id);
-  res.render('posts/show', { title: post.title , page: 'show-post', post: post });
-}));
+router.get('/:id', (req, res, next) => {
+	Post.findById(req.params.id).populate(
+		{
+		  path: 'comments',
+		  model: 'Comment',
+		  options: { sort: {'_id': '-1'} },
+		  populate: {
+		    path: 'author',
+		    model: 'User'
+		  }
+		}).exec(function(err, post) {
+		if(err) {
+			req.flash('error', err.message);
+			return res.redirect('/posts');
+		}
+	  res.render('posts/show', { title: post.title , page: 'show-post', post: post });
+	});
+});
 
 // EDIT
 router.get('/:id/edit', isLoggedIn, checkPostOwner, (req, res) => {

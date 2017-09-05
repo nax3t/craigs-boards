@@ -9,6 +9,7 @@ const PostSchema = new Schema({
 	location: String,
 	lat: Number,
 	lng: Number,
+	image: String,
 	author: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User"

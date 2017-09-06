@@ -58,10 +58,32 @@ router.post('/login', (req, res, next) => {
 });
 
 router.get('/profile', isLoggedIn, asyncMiddleware(async (req, res, next) => {
-  // // use currentUser unless need more info about user
-  // let user = User.findById(req.user._id);
   res.render('users/profile', {title: 'User Profile'});
 }));
+
+router.put('/users', (req, res) => {
+  User.findById(req.user._id, (err, user) => {
+    if (err) {
+      return next(err);
+    }
+    if (req.body.password === req.body.confirm) {
+        user.setPassword(req.body.password, function(err) {
+          user.resetPasswordToken = undefined;
+          user.resetPasswordExpires = undefined;
+
+          user.save(function(err) {
+            req.logIn(user, function(err) {
+              req.flash('success', 'Password updated successfully!');
+              res.redirect('/profile');
+            });
+          });
+        });
+    } else {
+        req.flash("error", "Passwords do not match.");
+        return res.redirect('/profile');
+    }
+  });
+});
 
 router.get('/logout', (req, res) => {
  req.logout();

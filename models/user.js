@@ -4,7 +4,9 @@ const passportLocalMongoose = require('passport-local-mongoose');
 
 const UserSchema = new Schema({
 	// username, salt, & hash are already added by passport-local-mongoose
-	email: String
+	email: String,
+	resetPasswordToken: String,
+	resetPasswordExpires: Date
 });
 
 UserSchema.plugin(passportLocalMongoose);

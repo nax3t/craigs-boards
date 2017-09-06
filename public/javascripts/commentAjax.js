@@ -14,6 +14,8 @@ $(document).ready(() => {
 				</p>
 				<hr>
 			`);
+			$('#comment-body').val('');
+			$('#comment-submit').blur();
 		});
 	});
 });

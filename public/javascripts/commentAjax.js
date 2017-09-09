@@ -1,4 +1,11 @@
 $(document).ready(() => {
+	$('.edit-comment').click(function(e) {
+		// toggle comment and comment edit form
+		$(this).closest('div').find('form').fadeToggle('slow');
+		$(this).closest('p').fadeToggle('slow');
+	});
+
+
 	let commentForm = $('#comment-form');
 	commentForm.submit(function(e) {
 		e.preventDefault();
@@ -10,7 +17,7 @@ $(document).ready(() => {
 			}
 			$('#comments').prepend(`
 				<p>
-					<span>${data.author}</span> - <strong>${data.comment.body}</strong>
+					<strong>${data.author}</strong> - ${data.comment.body}
 				</p>
 				<hr>
 			`);

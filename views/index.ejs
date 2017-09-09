@@ -7,3 +7,29 @@
     <p><a class="btn btn-primary btn-lg" href="/posts" role="button">View Posts &raquo;</a></p>
   </div>
 </div>
+
+<div id="map"></div>
+
+<script>
+	var map;
+	var posts = <%- JSON.stringify(posts) %>
+	function initMap() {
+		map = new google.maps.Map(document.getElementById('map'), {
+			zoom: 2,
+			center: new google.maps.LatLng(2.8,-187.3),
+			mapTypeId: 'terrain'
+		});
+
+		for (var i = 0; i < posts.length; i++) {
+		  var latLng = new google.maps.LatLng(posts[i].lat,posts[i].lng);
+		  var marker = new google.maps.Marker({
+		    position: latLng,
+		    map: map
+		  });
+		}
+	}
+</script>
+
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkG51lwJtDvYFKTBdRZlhzYg1D4QFsXPU&callback=initMap">
+</script>
+

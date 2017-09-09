@@ -13,3 +13,13 @@ body {
 	height: 400px;
 	width: 100%;
 }
+
+/* Hide comment edit form */
+.comment-edit-form {
+	display: none;
+}
+
+/* Style edit comment button */
+.edit-comment:hover {
+	color: red;
+}

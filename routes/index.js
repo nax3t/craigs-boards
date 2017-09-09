@@ -2,15 +2,17 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const User = require('../models/user');
+const Post = require('../models/post');
 const async = require('async');
 const crypto = require('crypto');
 const middleware = require('../middleware');
 const { asyncMiddleware, isLoggedIn } = middleware;
 const mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_KEY, domain: 'www.iantskon.com'});
 
-router.get('/', (req, res, next) => {
-  res.render('index', { title: 'Express', page: 'home' });
-});
+router.get('/', asyncMiddleware( async(req, res, next) => {
+  let posts = await Post.find();
+  res.render('index', { title: 'Express', page: 'home', posts: posts });
+}));
 
 router.get('/signup', (req, res) => {
   res.render('users/signup', {title: 'User Sign-up', page: 'signup', username: '', email: ''});

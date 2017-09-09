@@ -32,10 +32,40 @@
 		<div id="comments">
 		<% post.comments.forEach((comment)=> { %>
 			<p>
-				<span><%= comment.author.username %></span> - <strong><%= comment.body %></strong>
+				<strong><%= comment.author.username %></strong> - <%= comment.body %>
 			</p>
 			<hr>
 		<% }); %>
 		</div>
+		<div id="map"></div>
 	</div>
 </div>
+
+<script>
+	function initMap() {
+	  var lat = <%= post.lat %>;
+	  var lng = <%= post.lng %>;
+	  var center = {lat: lat, lng: lng };
+	  var map = new google.maps.Map(document.getElementById('map'), {
+	      zoom: 8,
+	      center: center,
+	      scrollwheel: false
+	  });
+	  var contentString = `
+	    <strong><%= post.name %><br />
+	    <%= post.location %></strong>
+	    <p><%= post.description %></p>
+	  `
+	  var infowindow = new google.maps.InfoWindow({
+	    content: contentString
+	  });
+	  var marker = new google.maps.Marker({
+	      position: center,
+	      map: map
+	  });
+	  marker.addListener('click', function() {
+	    infowindow.open(map, marker);
+	  });
+	}
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkG51lwJtDvYFKTBdRZlhzYg1D4QFsXPU&callback=initMap"></script>

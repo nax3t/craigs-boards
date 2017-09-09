@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/user');
 const Post = require('../models/post');
+const geocoder = require('geocoder');
 const middleware = require('../middleware');
 const { asyncMiddleware, isLoggedIn, sanitizeBody, checkPostOwner } = middleware;
 
@@ -51,16 +52,20 @@ router.post('/', isLoggedIn, upload.single('image'), sanitizeBody, (req, res, ne
 		return res.redirect('/posts/new');
 	}
 	cloudinary.uploader.upload(req.file.path, async (result) => { 
-		req.body.post.author = req.user._id;
-		req.body.post.image = result.secure_url;
-		try {
-				let post = await Post.create(req.body.post);
-				req.flash('success', 'Post created successfully!');
-			  res.redirect(`/posts/${post.id}`);
-		} catch (err) {
-				// test this to be sure it works
-				return next(err);
-		}
+		geocoder.geocode(req.body.post.location, async (err, data) => {
+	    req.body.post.lat = data.results[0].geometry.location.lat;
+	    req.body.post.lng = data.results[0].geometry.location.lng;
+			req.body.post.author = req.user._id;
+			req.body.post.image = result.secure_url;
+			try {
+					let post = await Post.create(req.body.post);
+					req.flash('success', 'Post created successfully!');
+				  res.redirect(`/posts/${post.id}`);
+			} catch (err) {
+					// test this to be sure it works
+					return next(err);
+			}
+	  });
 	});
 });
 
@@ -92,7 +97,7 @@ router.get('/:id/edit', isLoggedIn, checkPostOwner, (req, res) => {
 
 // UPDATE
 router.put('/:id', isLoggedIn, upload.single('image'), sanitizeBody, asyncMiddleware(async (req, res, next) => {
-	// How to combine cb with async here to be DRY?
+	// How to combine cb with async here to be DRY? - check this out for manual update -> https://coursework.vschool.io/mongoose-crud/
 	if(req.file) {
 			cloudinary.uploader.upload(req.file.path, async (result) => { 
 				req.body.post.image = result.secure_url;

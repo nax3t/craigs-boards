@@ -10,8 +10,8 @@
     <input type="text" class="form-control" id="input-location" name="post[location]" placeholder="Location" required>
   </div>
   <div class="form-group">
-  	<label for="selectCondition">Condition</label>
-  	<select class="form-control" id="selectCondition" name="post[condition]" required>
+  	<label for="select-condition">Condition</label>
+  	<select class="form-control" id="select-condition" name="post[condition]" required>
 			<option value="" selected disabled>Select Condition</option>
   	  <option value="excellent">Excellent</option>
   	  <option value="good">Good</option>
@@ -37,3 +37,6 @@
 
   <button type="submit" class="btn btn-default">Submit</button>
 </form>
+
+<!-- Google Places API -->
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkG51lwJtDvYFKTBdRZlhzYg1D4QFsXPU&libraries=places&callback=activatePlacesSearch" async defer></script>

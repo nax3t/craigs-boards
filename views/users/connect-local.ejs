@@ -1,6 +1,6 @@
 <% layout('layouts/boilerplate') -%>
 
-<form class="form-signin" action="/signup" method="POST">
+<form class="form-signin" action="/connect/local" method="POST">
   <h2 class="form-signin-heading">Please sign in</h2>
   <label for="inputUsername" class="sr-only">Username</label>
   <input type="text" id="inputUsername" class="form-control" name="username" placeholder="Username" required autofocus>
@@ -9,11 +9,9 @@
   <label for="inputPassword" class="sr-only">Password</label>
   <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required>
 
-  <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+  <button class="btn btn-lg btn-warning btn-block" type="submit">Add local</button>
 </form>
 
-<a href="/auth/facebook">
-  <button class="btn btn-lg btn-primary">
-    <i class="fa fa-facebook-official" aria-hidden="true"></i> Log in with Facebook
-  </button>
-</a>
+<hr>
+
+<p><a href="/profile">Go back to profile</a></p>

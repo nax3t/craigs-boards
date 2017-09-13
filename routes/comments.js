@@ -25,7 +25,8 @@ router.post("/", isLoggedIn, (req, res, next) => {
 			}
 			post.comments.push(comment);
 			post.save(() => {
-				res.status(200).json({comment: comment, author: req.user.username});
+				let author = req.user.local.username || req.user.facebook.name;
+				res.status(200).json({comment: comment, author: author});
 			});
 		});
 	});

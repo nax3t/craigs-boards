@@ -9,6 +9,9 @@ const middleware = require('../middleware');
 const { asyncMiddleware, isLoggedIn } = middleware;
 const mailgun = require('mailgun-js')({apiKey: process.env.MAILGUN_KEY, domain: 'www.iantskon.com'});
 
+// pass passport for configuration
+require('../config/passport')(passport);
+
 router.get('/', asyncMiddleware( async(req, res, next) => {
   let posts = await Post.find();
   res.render('index', { title: 'Express', page: 'home', posts: posts });
@@ -18,46 +21,22 @@ router.get('/signup', (req, res) => {
   res.render('users/signup', {title: 'User Sign-up', page: 'signup', username: '', email: ''});
 });
 
-router.post('/signup', (req, res) => {
-	let newUser = new User({username: req.body.username, email: req.body.email});
-	User.register(newUser, req.body.password, (err, user) =>{
-	  if(err){
-			// return out of callback and render the signup view with 
-			// error message as flash and prefilled form inputs for username and email
-	    return res.render('users/signup', 
-        {
-          error: err.message,
-          username: req.body.username,
-          email: req.body.email
-        }
-      );
-	  }
-	  passport.authenticate('local')(req, res, () =>{
-			res.redirect('/'); 
-	  });
-	});
-});
+// process the signup form
+router.post('/signup', passport.authenticate('local-signup', {
+    successRedirect : '/', // redirect to the secure profile section
+    failureRedirect : '/signup', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+}));
 
 router.get('/login', (req, res) => {
 	res.render('users/login', {title: 'User Login', page: 'login'});
 });
 
-router.post('/login', (req, res, next) => {
-  passport.authenticate('local', (err, user, info) => {
-    if (err) { return next(err); }
-    if (!user) { 
-    	req.flash('error', 'Incorrect username or password')
-    	return res.redirect('/login');
-    }
-    req.logIn(user, (err) => {
-      if (err) { return next(err); }
-      let redirectTo = req.session.redirectTo ? req.session.redirectTo : '/';
-      delete req.session.redirectTo;
-      req.flash('success', 'Successfully logged in!');
-      res.redirect(redirectTo);
-    });
-  })(req, res, next);
-});
+router.post('/login', passport.authenticate('local-login', {
+    successRedirect : '/', // redirect to the secure profile section
+    failureRedirect : '/login', // redirect back to the signup page if there is an error
+    failureFlash : true // allow flash messages
+}));
 
 router.get('/profile', isLoggedIn, asyncMiddleware(async (req, res, next) => {
   res.render('users/profile', {title: 'User Profile'});
@@ -68,10 +47,11 @@ router.put('/users', (req, res) => {
     if (err) {
       return next(err);
     }
-    if (req.body.password === req.body.confirm) {
-        user.setPassword(req.body.password, function(err) {
-          user.resetPasswordToken = undefined;
-          user.resetPasswordExpires = undefined;
+    if (user.validPassword(req.body.currentPassword)) {
+      if (req.body.password === req.body.confirm) {
+          user.local.password = user.generateHash(req.body.password);
+          user.resetPw.resetPasswordToken = undefined;
+          user.resetPw.resetPasswordExpires = undefined;
 
           user.save(function(err) {
             req.logIn(user, function(err) {
@@ -79,19 +59,86 @@ router.put('/users', (req, res) => {
               res.redirect('/profile');
             });
           });
-        });
+      } else {
+          req.flash("error", "Passwords do not match.");
+          return res.redirect('/profile');
+      }
     } else {
-        req.flash("error", "Passwords do not match.");
+        req.flash("error", "Incorrect password.");
         return res.redirect('/profile');
     }
   });
 });
 
+// ====================================
+// FACEBOOK ROUTES ====================
+// ====================================
+// route for facebook authentication and login
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+
+// handle the callback after facebook has authenticated the user
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {
+    successRedirect : '/',
+    failureRedirect : '/login'
+  }));
+
 router.get('/logout', (req, res) => {
- req.logout();
- req.flash('success', 'See you next time!');
- res.redirect('/');
+  req.logout();
+  req.flash('success', 'See you next time!');
+  res.redirect('/');
 });
+
+// ==============================================
+// CONNECT ALREADY LOGGED IN ACCOUNT ============
+// ==============================================
+
+router.get('/connect/local', isLoggedIn, function(req, res) {
+  res.render('users/connect-local', { message: req.flash('loginMessage') });
+});
+
+router.post('/connect/local', passport.authenticate('local-signup', {
+  successRedirect: '/profile', // redirect to the secure profile section
+  failureRedirect: '/connect/local', // redirect back to the signup page if there is an error
+  failureFlash: true // allow flash messages
+}));
+
+// ====================================
+// UNLINK LOCAL AND FACEBOOK ==========
+// ====================================
+
+router.get('/unlink/local', isLoggedIn, asyncMiddleware(async (req, res, next) => {
+  let user = req.user;
+  user.local.username = undefined;
+  user.local.email    = undefined;
+  user.local.password = undefined;
+  if (!user.facebook.token) {
+    await user.save();
+    await user.remove();
+    return res.redirect('/logout');
+  }
+  await user.save();
+  res.redirect('/profile');
+}));
+
+// facebook -------------------------------
+router.get('/unlink/facebook', isLoggedIn, asyncMiddleware(async (req, res, next) => {
+  let user = req.user;
+  user.facebook.token = undefined;
+  user.facebook.email = undefined;
+  user.facebook.name = undefined;
+  if (!user.local.username) {
+    await user.save();
+    await user.remove();
+    return res.redirect('/logout');
+  }
+  await user.save();
+  res.redirect('/profile');
+}));
+
+// ====================================
+// PASSWORD RESET =====================
+// ====================================
 
 // forgot password
 router.get('/forgot', (req, res) => {
@@ -113,8 +160,8 @@ router.post('/forgot', (req, res, next) => {
           return res.redirect('/forgot');
         }
 
-        user.resetPasswordToken = token;
-        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        user.resetPw.resetPasswordToken = token;
+        user.resetPw.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
         user.save((err) => {
           done(err, token, user);
@@ -146,7 +193,7 @@ router.post('/forgot', (req, res, next) => {
 });
 
 router.get('/reset/:token', (req, res) => {
-  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
+  User.findOne({ resetPw: { resetPasswordToken: req.params.token } }, { resetPw: { resetPasswordExpires: { $gt: Date.now() } } }, (err, user) => {
     if (!user) {
       req.flash('error', 'Password reset token is invalid or has expired.');
       return res.redirect('/forgot');
@@ -158,14 +205,14 @@ router.get('/reset/:token', (req, res) => {
 router.post('/reset/:token', (req, res) => {
   async.waterfall([
     (done) => {
-      User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
+      User.findOne({ resetPw: { resetPasswordToken: req.params.token } }, { resetPw: { resetPasswordExpires: { $gt: Date.now() } } }, (err, user) => {
         if (!user) {
           req.flash('error', 'Password reset token is invalid or has expired.');
           return res.redirect('back');
         } else if (req.body.password === req.body.confirm) {
             user.setPassword(req.body.password, function(err) {
-              user.resetPasswordToken = undefined;
-              user.resetPasswordExpires = undefined;
+              user.resetPw.resetPasswordToken = undefined;
+              user.resetPw.resetPasswordExpires = undefined;
 
               user.save(function(err) {
                 req.logIn(user, function(err) {

@@ -2,22 +2,69 @@
 
 <div class="row">
 	<div class="col-md-4 col-offset-4">
-		<h1><%= currentUser.username %>'s profile</h1>
-
+		<h1><%= currentUser.local.username || currentUser.facebook.name %>'s profile</h1>
+		<% if (currentUser.local.username) { %>
 		<form action="/users?_method=PUT" method="POST">
 		  <legend>Reset Password</legend>
 		  <div class="form-group">
+		    <label for="current-password">Current Password</label>
+		    <input type="password" name="currentPassword" placeholder="Current password" autofocus="autofocus" class="form-control" id="current-password" autofocus/>
+		  </div>
+		  <div class="form-group">
 		    <label for="password">New Password</label>
-		    <input type="password" name="password" placeholder="New password" autofocus="autofocus" class="form-control"/>
+		    <input type="password" name="password" placeholder="New password" autofocus="autofocus" class="form-control" id="password"/>
 		  </div>
 		  <div class="form-group">
 		    <label for="confirm">Confirm Password</label>
-		    <input type="password" name="confirm" placeholder="Confirm password" class="form-control"/>
+		    <input type="password" name="confirm" placeholder="Confirm password" class="form-control" id="confirm"/>
 		  </div>
 		  <div class="form-group">
 		    <button type="submit" class="btn btn-primary">Update Password</button>
 		  </div>
 		</form>
+		<% } %>
+	</div>
+</div>
 
+<div class="row">
+	<!-- LOCAL INFORMATION -->
+	<div class="col-sm-6">
+    <div class="card">
+    	<div class="card-body">
+        <h3 class="card-title"><span class="fa fa-user"></span> Local</h3>
+
+        <% if (currentUser.local.email) { %>
+        <p class="card-text">
+            <strong>username</strong>: <%= currentUser.local.username %><br>
+            <strong>email</strong>: <%= currentUser.local.email %>
+          </p>
+
+        <a href="/unlink/local" class="btn btn-<%= currentUser.facebook.token ? 'primary' : 'danger' %>"><%= currentUser.facebook.token ? 'Unlink' : 'Delete Account' %></a>
+        <% } else { %>
+        <a href="/connect/local" class="btn btn-primary">Connect Local</a>
+        <% } %>
+			</div>
+    </div>
+	</div>
+
+	<!-- FACEBOOK INFORMATION -->
+	<div class="col-sm-6">
+    <div class="card">
+	    <div class="card-body">
+        <h3 class="card-title"><span class="fa fa-facebook"></span> Facebook</h3>
+
+        <!-- check if the user has this token (is the user authenticated with this social account) -->
+        <% if (currentUser.facebook.token) { %>
+        <p class="card-text">
+          <strong>name</strong>: <%= currentUser.facebook.name %><br>
+          <strong>email</strong>: <%= currentUser.facebook.email %>
+        </p>
+
+        <a href="/unlink/facebook" class="btn btn-<%= currentUser.local.username ? 'primary' : 'danger' %>"><%= currentUser.local.username ? 'Unlink' : 'Delete Account' %></a>
+        <% } else { %>
+        <a href="/auth/facebook" class="btn btn-primary">Connect Facebook</a>
+        <% } %>
+			</div>
+    </div>
 	</div>
 </div>

@@ -15,6 +15,7 @@ const LocalStrategy = require("passport-local").Strategy;
 const methodOverride = require("method-override");
 const engine = require('ejs-mate');
 const User = require('./models/user');
+const configAuth = require('./config/auth'); // is this needed?
 
 const index 		= require('./routes/index');
 const posts 		= require('./routes/posts');
@@ -25,7 +26,7 @@ const app = express();
 // assign mongoose promise library and connect to database
 mongoose.Promise = global.Promise;
 
-const databaseUri = process.env.DATABASE_URI || 'mongodb://localhost/craigs_boards_development';
+const databaseUri = process.env.DATABASE_URI || 'mongodb://localhost/cb_dev';
 
 mongoose.connect(databaseUri, { useMongoClient: true })
       .then(() => console.log(`Database connected`))
@@ -57,9 +58,6 @@ app.use(require('express-session')({
 }));
 app.use(passport.initialize());
 app.use(passport.session());
-passport.use(new LocalStrategy(User.authenticate()));
-passport.serializeUser(User.serializeUser());
-passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next){
    res.locals.currentUser = req.user;

@@ -3,7 +3,7 @@
 <div class="jumbotron">
   <div class="container">
     <h1 class="display-3"><%= title %></h1>
-   	<p>Welcome to <%= title %> <%= currentUser != undefined ? currentUser.username : '' %></p>
+   	<p>Welcome to <%= title %> <%= currentUser != undefined ? currentUser.local.username || currentUser.facebook.name : '' %></p>
     <p><a class="btn btn-primary btn-lg" href="/posts" role="button">View Posts &raquo;</a></p>
   </div>
 </div>

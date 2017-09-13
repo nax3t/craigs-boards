@@ -8,7 +8,7 @@
 			  <h4 class="card-title"><%= post.title %></h4>
 			  <p>Price: $<%= post.price %>.00</p>
 			  <p class="card-text"><%- post.description %></p>
-				<p>Posted by: <%= post.author.username %> <%= moment(post.createdAt).fromNow() %></p>
+				<p>Posted by: <%= post.author.local.username || post.author.facebook.name %> <%= moment(post.createdAt).fromNow() %></p>
 			</div>
 		</div>
 		<% if(currentUser && currentUser.equals(post.author)) { %>
@@ -36,7 +36,7 @@
 				<input type="submit" class="btn btn-default" value="Update">
 			</form>
 			<p>
-				<i class="fa fa-pencil-square-o edit-comment" aria-hidden="true"></i> <strong><%= comment.author.username %></strong> - <%= comment.body %> 
+				<i class="fa fa-pencil-square-o edit-comment" aria-hidden="true"></i> <strong><%= comment.author.local.username || comment.author.facebook.name %></strong> - <%= comment.body %> 
 			</p>
 			<hr>
 		<% }); %>

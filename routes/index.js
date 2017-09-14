@@ -35,7 +35,7 @@ router.get('/login', (req, res) => {
 router.post('/login', passport.authenticate('local-login', {
     successRedirect : '/', // redirect to the secure profile section
     failureRedirect : '/login', // redirect back to the signup page if there is an error
-    failureFlash : true // allow flash messages
+    failureFlash : 'Incorrect username or password' // set error flash message
 }));
 
 router.get('/profile', isLoggedIn, asyncMiddleware(async (req, res, next) => {
@@ -50,11 +50,8 @@ router.put('/users', (req, res) => {
     if (user.validPassword(req.body.currentPassword)) {
       if (req.body.password === req.body.confirm) {
           user.local.password = user.generateHash(req.body.password);
-          user.resetPw.resetPasswordToken = undefined;
-          user.resetPw.resetPasswordExpires = undefined;
-
-          user.save(function(err) {
-            req.logIn(user, function(err) {
+          user.save((err) => {
+            req.logIn(user, (err) => {
               req.flash('success', 'Password updated successfully!');
               res.redirect('/profile');
             });
@@ -74,14 +71,24 @@ router.put('/users', (req, res) => {
 // FACEBOOK ROUTES ====================
 // ====================================
 // route for facebook authentication and login
-router.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+router.get('/auth/facebook/:action', (req,res,next) => {
+    passport.authenticate(
+      'facebook',
+      {
+        callbackURL:`/auth/facebook/callback/${req.params.action}`,
+        scope: 'email'
+      }
+    ) (req,res,next);
+});
+
 
 // handle the callback after facebook has authenticated the user
-router.get('/auth/facebook/callback',
-      passport.authenticate('facebook', {
-        successRedirect : '/profile',
-        failureRedirect : '/'
-      }));
+router.get('/auth/facebook/callback/login',
+    passport.authenticate('facebook', {
+        callbackURL: '/auth/facebook/callback/login',
+        successRedirect: '/',
+        failureRedirect: '/login'
+    }));
 
 router.get('/logout', (req, res) => {
   req.logout();
@@ -93,7 +100,8 @@ router.get('/logout', (req, res) => {
 // CONNECT ALREADY LOGGED IN ACCOUNT ============
 // ==============================================
 
-router.get('/connect/local', isLoggedIn, function(req, res) {
+//-------local
+router.get('/connect/local', isLoggedIn, (req, res) => {
   res.render('users/connect-local', { message: req.flash('loginMessage') });
 });
 
@@ -102,6 +110,15 @@ router.post('/connect/local', passport.authenticate('local-signup', {
   failureRedirect: '/connect/local', // redirect back to the signup page if there is an error
   failureFlash: true // allow flash messages
 }));
+
+//-------facebook
+// handle the callback after facebook has authorized the user
+router.get('/auth/facebook/callback/connect', isLoggedIn,
+    passport.authenticate('facebook', {
+        callbackURL: '/auth/facebook/callback/connect',
+        successRedirect: '/profile',
+        failureRedirect: '/'
+    }));
 
 // ====================================
 // UNLINK LOCAL AND FACEBOOK ==========
@@ -154,14 +171,14 @@ router.post('/forgot', (req, res, next) => {
       });
     },
     (token, done) => {
-      User.findOne({ email: req.body.email }, (err, user) => {
+      User.findOne({ 'local.email': req.body.email }, (err, user) => {
         if (!user) {
           req.flash('error', 'No account with that email address exists.');
           return res.redirect('/forgot');
         }
 
-        user.resetPw.resetPasswordToken = token;
-        user.resetPw.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+        user.resetPasswordToken = token;
+        user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
 
         user.save((err) => {
           done(err, token, user);
@@ -171,7 +188,7 @@ router.post('/forgot', (req, res, next) => {
     (token, user, done) => {
       let data = {
         from: 'learntocodeinfo@gmail.com',
-        to: user.email,
+        to: user.local.email,
         subject: `Craig's Boards - Password Reset`,
         html: `
           <p>You are receiving this because you (or someone else) have requested the reset of the password for your account.</p>
@@ -182,7 +199,7 @@ router.post('/forgot', (req, res, next) => {
       };
        
       mailgun.messages().send(data, (err, body) => {
-        req.flash('success', `An e-mail has been sent to ${user.email} with further instructions.`);
+        req.flash('success', `An e-mail has been sent to ${user.local.email} with further instructions.`);
         done(err, 'done');
       });
     }
@@ -193,7 +210,7 @@ router.post('/forgot', (req, res, next) => {
 });
 
 router.get('/reset/:token', (req, res) => {
-  User.findOne({ resetPw: { resetPasswordToken: req.params.token } }, { resetPw: { resetPasswordExpires: { $gt: Date.now() } } }, (err, user) => {
+  User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
     if (!user) {
       req.flash('error', 'Password reset token is invalid or has expired.');
       return res.redirect('/forgot');
@@ -205,19 +222,17 @@ router.get('/reset/:token', (req, res) => {
 router.post('/reset/:token', (req, res) => {
   async.waterfall([
     (done) => {
-      User.findOne({ resetPw: { resetPasswordToken: req.params.token } }, { resetPw: { resetPasswordExpires: { $gt: Date.now() } } }, (err, user) => {
+      User.findOne({ resetPasswordToken: req.params.token, resetPasswordExpires: { $gt: Date.now() } }, (err, user) => {
         if (!user) {
           req.flash('error', 'Password reset token is invalid or has expired.');
           return res.redirect('back');
         } else if (req.body.password === req.body.confirm) {
-            user.setPassword(req.body.password, function(err) {
-              user.resetPw.resetPasswordToken = undefined;
-              user.resetPw.resetPasswordExpires = undefined;
-
-              user.save(function(err) {
-                req.logIn(user, function(err) {
-                  done(err, user);
-                });
+            user.local.password = user.generateHash(req.body.password);
+            user.resetPasswordToken = undefined;
+            user.resetPasswordExpires = undefined;
+            user.save((err) => {
+              req.logIn(user, (err) => {
+                done(err, user);
               });
             });
         } else {
@@ -229,11 +244,11 @@ router.post('/reset/:token', (req, res) => {
     (user, done) => {
       let data = {
         from: 'learntocodeinfo@gmail.com',
-        to: user.email,
+        to: user.local.email,
         subject: 'Craig\'s Boards - Password Reset',
         html: `
-          <h4>Hello ${user.username},</h4>
-          <p>This is a confirmation that the password for your account ${user.email} has just been changed.</p>
+          <h4>Hello ${user.local.username},</h4>
+          <p>This is a confirmation that the password for your account ${user.local.email} has just been changed.</p>
         `
       };
        
@@ -254,7 +269,7 @@ router.get("/secret", (req, res, next) => {
         password: "password"
     }
     next();
-}, passport.authenticate("local", 
+}, passport.authenticate("local-login", 
     {
         successRedirect: "/posts",
         failureRedirect: "/login"

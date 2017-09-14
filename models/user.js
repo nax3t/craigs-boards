@@ -4,10 +4,6 @@ const Post = require('./post');
 const Comment = require('./comment');
 
 const UserSchema = mongoose.Schema({
-		resetPw: {
-			resetPasswordToken: String,
-			resetPasswordExpires: Date
-		},
     local: {
       username: String,
       email: String,
@@ -18,7 +14,9 @@ const UserSchema = mongoose.Schema({
       token: String,
       email: String,
       name: String
-    }
+    },
+    resetPasswordToken: String,
+    resetPasswordExpires: Date
 });
 
 // methods ======================

@@ -21,7 +21,7 @@
 		<form action="/posts/<%= post.id %>/comments" method="POST" id="comment-form">
 			<div class="form-group">
 				<label for="comment-body">Comment</label>
-				<input type="text" id="comment-body" name="comment[body]" class="form-control" placeholder="Have any questions, <%= currentUser.username %>?" required>
+				<input type="text" id="comment-body" name="comment[body]" class="form-control" placeholder="Have any questions?" required>
 			</div>
 			<div class="form-group">	
 				<button type="submit" class="btn btn-default" id="comment-submit">Submit</button>

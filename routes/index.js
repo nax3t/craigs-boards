@@ -14,7 +14,7 @@ require('../config/passport')(passport);
 
 router.get('/', asyncMiddleware( async(req, res, next) => {
   let posts = await Post.find();
-  res.render('index', { title: 'Express', page: 'home', posts: posts });
+  res.render('index', { title: 'Craig\'s Boards', page: 'home', posts: posts });
 }));
 
 router.get('/signup', (req, res) => {

@@ -16,6 +16,7 @@ const methodOverride = require("method-override");
 const engine = require('ejs-mate');
 const User = require('./models/user');
 const configAuth = require('./config/auth'); // is this needed?
+const seedDB = require('./seeds');
 
 const index 		= require('./routes/index');
 const posts 		= require('./routes/posts');
@@ -31,6 +32,9 @@ const databaseUri = process.env.DATABASE_URI || 'mongodb://localhost/cb_dev';
 mongoose.connect(databaseUri, { useMongoClient: true })
       .then(() => console.log(`Database connected`))
       .catch(err => console.log(`Database connection error: ${err.message}`));
+
+// Seed the database
+seedDB();
 
 // view engine and layout-templates setup
 app.engine('ejs', engine);

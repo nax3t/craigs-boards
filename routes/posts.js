@@ -36,8 +36,21 @@ cloudinary.config({
 
 // INDEX
 router.get('/', asyncMiddleware(async (req, res, next) => {
-  let posts = await Post.find({});
-  res.render('posts/index', { title: 'Posts Index', page: 'posts', posts: posts });
+	let results = {faceted: false};
+	let posts;
+	if(!Object.keys(req.query).length) {
+			posts = await Post.find();
+			results.posts = posts;
+	} else {
+		  let posts = await Post.aggregate().facet({
+		  	title: [{ $match: { title: new RegExp(req.query.title, 'ig') } }],
+		  	condition: [{ $match: { condition: new RegExp(req.query.condition, 'i') } }]
+			}).exec();
+			results.faceted = true;
+			results.posts = posts;
+	}
+	eval(require('locus'))
+  res.render('posts/index', { title: 'Posts Index', page: 'posts', results: results });
 }));
 
 // NEW

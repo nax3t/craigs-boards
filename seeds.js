@@ -13,7 +13,7 @@ const seedDB = async () => {
 				password: faker.internet.password()
 			}
 			let user = await User.create(userData);
-			for(var i = 0; i <= 10000; i++) {
+			for(var i = 0; i <= 100; i++) {
 				try {
 						let postData = {
 							title: faker.lorem.word(),

@@ -36,21 +36,30 @@ cloudinary.config({
 
 // INDEX
 router.get('/', asyncMiddleware(async (req, res, next) => {
-	let results = {faceted: false};
 	let posts;
-	if(!Object.keys(req.query).length) {
-			posts = await Post.find();
-			results.posts = posts;
+	if(req.query.post) {
+		let { search, condition, price, location } = req.query.post;
+		let query = [];
+
+		// build $and query array
+		if (search) {
+			search = new RegExp(search, 'gi');
+			query.push({ $or: [ { title: search }, { description: search  } ] });
+		}
+		if (condition) query.push({ condition: new RegExp(condition, 'i') });
+		if (price) query.push({ price: price });
+		if (location) query.push({ location: new RegExp(location, 'gi') });
+		if (!query.length) {
+				posts = [];
+		} else {
+				posts = await Post.find({
+					$and: query
+				});
+		}
 	} else {
-		  let posts = await Post.aggregate().facet({
-		  	title: [{ $match: { title: new RegExp(req.query.title, 'ig') } }],
-		  	condition: [{ $match: { condition: new RegExp(req.query.condition, 'i') } }]
-			}).exec();
-			results.faceted = true;
-			results.posts = posts;
+			posts = await Post.find();
 	}
-	eval(require('locus'))
-  res.render('posts/index', { title: 'Posts Index', page: 'posts', results: results });
+  res.render('posts/index', { title: 'Posts Index', page: 'posts', posts: posts });
 }));
 
 // NEW

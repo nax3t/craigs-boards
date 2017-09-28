@@ -6,17 +6,22 @@
 		
 		<h3>Filter Results</h3>
 		<form action="/posts" method="GET">
-			<label for="title">Title</label>
-			<input type="text" id="title" name="title">
+			<label for="search">Search</label>
+			<input type="text" id="search" name="post[search]">
 			<fieldset>
 				<legend>Condition</legend>
 				<label for="condition-excellent">Excellent</label>
-				<input type="checkbox" id="condition-excellent" name="condition" value="excellent">
+				<input type="checkbox" id="condition-excellent" name="post[condition]" value="excellent">
 				<label for="condition-good">Good</label>
-				<input type="checkbox" id="condition-good" name="condition" value="good">
+				<input type="checkbox" id="condition-good" name="post[condition]" value="good">
 				<label for="condition-poor">Poor</label>
-				<input type="checkbox" id="condition-poor" name="condition" value="poor">
+				<input type="checkbox" id="condition-poor" name="post[condition]" value="poor">
 			</fieldset>
+			<label for="price">Price</label>
+			<input type="number" name="post[price]" id="price" min="0" step="1">
+			<label for="address">Address</label>
+			<input type="text" name="post[location]" id="address">
+
 			<input type="submit" value="Go!">
 		</form>
 
@@ -24,31 +29,16 @@
 </div>
 
 <div class="row">
-	<% if (results.faceted) { %>
-		<% results.posts[0].title.forEach(function(post) { %>
-			<div class="col-md-4">
-				<div class="card" style="width: 20rem;">
-				  <img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>">
-				  <div class="card-body">
-				    <h4 class="card-title"><%= post.title %></h4>
-				    <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
-				    <a href="/posts/<%= post.id %>" class="btn btn-primary">View Board</a>
-				  </div>
-				</div>
-			</div>
-		<% }); %>
-	<% } else { %>
-		<% results.posts.forEach((post) => { %>
-		<div class="col-md-4">
-			<div class="card" style="width: 20rem;">
-			  <img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>">
-			  <div class="card-body">
-			    <h4 class="card-title"><%= post.title %></h4>
-			    <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
-			    <a href="/posts/<%= post.id %>" class="btn btn-primary">View Board</a>
-			  </div>
-			</div>
+	<% posts.forEach((post) => { %>
+	<div class="col-md-4">
+		<div class="card" style="width: 20rem;">
+		  <img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>">
+		  <div class="card-body">
+		    <h4 class="card-title"><%= post.title %></h4>
+		    <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
+		    <a href="/posts/<%= post.id %>" class="btn btn-primary">View Board</a>
+		  </div>
 		</div>
-		<% }); %>
-	<% } %>
+	</div>
+	<% }); %>
 </div>

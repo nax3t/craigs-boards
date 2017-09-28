@@ -6,7 +6,8 @@
 			<img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>">
 			<div class="card-body">
 			  <h4 class="card-title"><%= post.title %></h4>
-			  <p>Price: $<%= post.price %>.00</p>
+			  <p><strong>Condition:</strong> <%= post.condition %></p>
+			  <p><strong>Price:</strong> $<%= post.price %>.00</p>
 			  <p class="card-text"><%- post.description %></p>
 				<p>Posted by: <%= post.author.local.username || post.author.facebook.name %> <%= moment(post.createdAt).fromNow() %></p>
 			</div>

@@ -13,13 +13,15 @@ const seedDB = async () => {
 				password: faker.internet.password()
 			}
 			let user = await User.create(userData);
+			let conditions = ['Excellent', 'Good', 'Poor'];
 			for(var i = 0; i <= 100; i++) {
 				try {
+						let random = Math.floor(Math.random() * 3 + 0);
 						let postData = {
 							title: faker.lorem.word(),
 							description: faker.lorem.sentence(),
 							price: faker.commerce.price(),
-							condition: 'Excellent',
+							condition: conditions[random],
 							image: faker.image.imageUrl(),
 							lat: faker.address.latitude(),
 							lng: faker.address.longitude(),

@@ -14,7 +14,7 @@ const seedDB = async () => {
 			}
 			let user = await User.create(userData);
 			let conditions = ['Excellent', 'Good', 'Poor'];
-			for(var i = 0; i <= 10; i++) {
+			for(var i = 0; i < 30; i++) {
 				try {
 						let random = Math.floor(Math.random() * 3 + 0);
 						let postData = {

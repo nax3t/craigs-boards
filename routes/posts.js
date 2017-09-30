@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/user');
 const Post = require('../models/post');
+const paginate = require('express-paginate');
 const geocoder = require('geocoder');
 const middleware = require('../middleware');
 const { asyncMiddleware, isLoggedIn, sanitizeBody, checkPostOwner } = middleware;
@@ -34,6 +35,8 @@ cloudinary.config({
 });
 //************* END Image Upload Config *************\\
 
+router.use(paginate.middleware(6, 50));
+
 // INDEX
 router.get('/', asyncMiddleware(async (req, res, next) => {
 	let posts;
@@ -49,13 +52,21 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 			if (condition) query.push({ condition: new RegExp(condition, 'i') });
 			if (price) query.push({ price: price });
 			if (location) query.push({ location: new RegExp(location, 'gi') });
-			posts = await Post.find({
+			posts = await Post.paginate({
 				$and: query
-			});
+			}, { page: req.query.page, limit: req.query.limit });
 	} else {
-			posts = await Post.find();
+			posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit });
 	}
-  res.render('posts/index', { title: 'Posts Index', page: 'posts', posts: posts });
+  res.render('posts/index', { 
+		title: 'Posts Index', 
+		page: 'posts', 
+		posts: posts.docs,
+		pageNumber: posts.page, 
+		pageCount: posts.pages,
+    itemCount: posts.limit,
+    pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page) 
+  });
 }));
 
 // NEW

@@ -29,4 +29,6 @@ PostSchema.pre('findOne', function(next) {
   next();
 });
 
+PostSchema.plugin(require('mongoose-paginate'));
+
 module.exports = mongoose.model('Post', PostSchema);

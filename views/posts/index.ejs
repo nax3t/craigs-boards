@@ -121,6 +121,7 @@
 		});
 
 		var markers = [];
+		var bounds = new google.maps.LatLngBounds();
 
 		for (var i = 0; i < posts.length; i++) {
 		  var latLng = new google.maps.LatLng(posts[i].lat, posts[i].lng);
@@ -133,7 +134,10 @@
           window.location.href = this.url;
       });
 		  markers.push(marker);
+		  bounds.extend(markers[i].getPosition());
 		}
+
+		map.fitBounds(bounds);
 
 		var markerCluster = new MarkerClusterer(map, markers,
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
@@ -163,6 +167,7 @@
 	        infoWindow.open(map);
 
 	        map.setCenter(pos);
+	        map.setZoom(10);
 	      }, function() {
 	        handleLocationError(true, infoWindow, map.getCenter());
 	      });

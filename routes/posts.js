@@ -37,25 +37,21 @@ cloudinary.config({
 // INDEX
 router.get('/', asyncMiddleware(async (req, res, next) => {
 	let posts;
-	if(req.query.post) {
-		let { search, condition, price, location } = req.query.post;
-		let query = [];
-
-		// build $and query array
-		if (search) {
-			search = new RegExp(search, 'gi');
-			query.push({ $or: [ { title: search }, { description: search  } ] });
-		}
-		if (condition) query.push({ condition: new RegExp(condition, 'i') });
-		if (price) query.push({ price: price });
-		if (location) query.push({ location: new RegExp(location, 'gi') });
-		if (!query.length) {
-				posts = [];
-		} else {
-				posts = await Post.find({
-					$and: query
-				});
-		}
+	// check if query exists
+	if(req.query.post && Object.values(req.query.post).join('')) {
+			let { search, condition, price, location } = req.query.post;
+			let query = [];
+			// build $and query array
+			if (search) {
+				search = new RegExp(search, 'gi');
+				query.push({ $or: [ { title: search }, { description: search  } ] });
+			}
+			if (condition) query.push({ condition: new RegExp(condition, 'i') });
+			if (price) query.push({ price: price });
+			if (location) query.push({ location: new RegExp(location, 'gi') });
+			posts = await Post.find({
+				$and: query
+			});
 	} else {
 			posts = await Post.find();
 	}

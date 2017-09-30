@@ -1,44 +1,99 @@
 <% layout('layouts/boilerplate') -%>
 
 <div class="row">
-	<div class="col-md-12">
-		<a href="/posts/new" class="btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New Post</a>
-		
-		<h3>Filter Results</h3>
-		<form action="/posts" method="GET">
-			<label for="search">Search</label>
-			<input type="text" id="search" name="post[search]">
-			<fieldset>
-				<legend>Condition</legend>
-				<label for="condition-excellent">Excellent</label>
-				<input type="checkbox" id="condition-excellent" name="post[condition]" value="excellent">
-				<label for="condition-good">Good</label>
-				<input type="checkbox" id="condition-good" name="post[condition]" value="good">
-				<label for="condition-poor">Poor</label>
-				<input type="checkbox" id="condition-poor" name="post[condition]" value="poor">
-			</fieldset>
-			<label for="price">Price</label>
-			<input type="number" name="post[price]" id="price" min="0" step="1">
-			<label for="address">Address</label>
-			<input type="text" name="post[location]" id="address">
 
-			<input type="submit" value="Go!">
-		</form>
+  <div class="col-lg-3">
+  	<a href="/posts/new" class="mb-2 btn btn-primary"><i class="fa fa-plus" aria-hidden="true"></i> New Post</a>
 
-	</div>
-</div>
+    <h1 class="my-4">Filter Results</h1>
+    <form action="/posts" method="GET">
+    	<div class="form-group">
+	    	<label for="search">Search</label>
+	    	<input type="text" class="form-control" id="search" name="post[search]" placeholder="Search">
+	    </div>
+    	<fieldset>
+    		<legend id="condition-legend">Condition</legend>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="excellent" name="post[condition]"> Excellent
+    		  </label>
+    		</div>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="good" name="post[condition]"> Good
+    		  </label>
+    		</div>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="poor" name="post[condition]"> Poor
+    		  </label>
+    		</div>
+    	</fieldset>
+    	<div class="form-group">
+	    	<label for="price">Price</label>
+	    	<input type="number" class="form-control" id="price" name="post[price]" min="0" step="1" placeholder="Price">
+	    </div>
+    	<div class="form-group">
+	    	<label for="address">Address</label>
+	    	<input type="text" class="form-control" id="address" name="post[location]" placeholder="Address">
+	    </div>
 
-<div class="row">
-	<% posts.forEach((post) => { %>
-	<div class="col-md-4">
-		<div class="card" style="width: 20rem;">
-		  <img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>">
-		  <div class="card-body">
-		    <h4 class="card-title"><%= post.title %></h4>
-		    <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
-		    <a href="/posts/<%= post.id %>" class="btn btn-primary">View Board</a>
-		  </div>
+    	<input type="submit" class="btn btn-success" role="button" value="Go!">
+    </form>
+
+  </div>
+  <!-- /.col-lg-3 -->
+	
+	<div class="col-lg-9">
+
+		<div class="row">
+			<% posts.forEach((post) => { %>
+			<div class="col-lg-4 col-md-6 mb-4">
+			  <div class="card h-100">
+			    <a href="/posts/<%= post.id %>"><img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>"></a>
+			    <div class="card-body">
+			      <h4 class="card-title">
+			        <a href="/posts/<%= post.id %>"><%= post.title %></a>
+			      </h4>
+			      <h5>$<%= post.price %>.00</h5>
+			      <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
+			      <a href="/posts/<%= post.id %>" class="btn btn-primary">View Board</a>
+			    </div>
+			    <div class="card-footer">
+			      <small class="text-muted">&#9733; &#9733; &#9733; &#9733; &#9734;</small>
+			    </div>
+			  </div>
+			</div>
+			<% }); %>
 		</div>
-	</div>
-	<% }); %>
+		
+		<div class="row justify-content-center">
+			<div class="col-3">		
+				<nav>
+					<ul class="pagination">
+						<li class="page-item">
+							<a href="#" class="page-link" aria-label="Previous">
+								<span aria-hidden="true">&laquo;</span>
+							</a>
+						</li>
+						<li class="page-item"><a href="#" class="page-link">1</a></li>
+						<li class="page-item"><a href="#" class="page-link">2</a></li>
+						<li class="page-item"><a href="#" class="page-link">3</a></li>
+						<li class="page-item"><a href="#" class="page-link">4</a></li>
+						<li class="page-item">
+							<a href="#" class="page-link" aria-label="Next">
+								<span aria-hidden="true">&raquo;</span>
+							</a>
+						</li>
+					</ul>
+				</nav>
+			</div>
+			<!-- /.col-md-6 -->
+		</div>
+		<!-- /.row -->
+
+  </div>
+  <!-- /.col-lg-9 -->
+
 </div>
+<!-- /.row -->

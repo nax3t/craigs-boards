@@ -40,8 +40,10 @@ router.use(paginate.middleware(6, 50));
 // INDEX
 router.get('/', asyncMiddleware(async (req, res, next) => {
 	let posts;
-	// check if query exists
-	if(req.query.post && Object.values(req.query.post).join('')) {
+	// check if filters exist
+	if (req.query.post) var filters = Object.values(req.query.post).join('') ? true : false;
+	// check if request sent with ajax and has filter(s)
+	if (req.xhr && filters) {
 			let { search, condition, price, location } = req.query.post;
 			let query = [];
 			// build $and query array
@@ -49,24 +51,50 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 				search = new RegExp(search, 'gi');
 				query.push({ $or: [ { title: search }, { description: search  } ] });
 			}
-			if (condition) query.push({ condition: new RegExp(condition, 'i') });
+			if (condition) {
+				if (Array.isArray(condition)) condition = '(' + condition.join('?|') + '?)';
+				query.push({ condition: new RegExp(condition, 'gi') });
+			}
 			if (price) query.push({ price: price });
 			if (location) query.push({ location: new RegExp(location, 'gi') });
 			posts = await Post.paginate({
 				$and: query
 			}, { page: req.query.page, limit: req.query.limit });
-	} else {
+			// send back json with status of 200 (OK)
+			res.status(200).json({
+				posts: posts.docs,
+				pageNumber: posts.page, 
+				has_next: paginate.hasNextPages(req)(posts.pages),
+				has_prev: req.query.page > 1,
+				pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page),
+				nextUrl: paginate.href(req)(),
+				prevUrl: paginate.href(req)(true)
+			});
+	} else if (req.xhr && !filters) {
 			posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit });
+			// send back json with status of 200 (OK)
+			res.status(200).json({
+				posts: posts.docs,
+				pageNumber: posts.page, 
+				has_next: paginate.hasNextPages(req)(posts.pages),
+				has_prev: req.query.page > 1,
+				pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page),
+				nextUrl: paginate.href(req)(),
+				prevUrl: paginate.href(req)(true)
+			});
+	} else {
+			// if request wasn't sent with ajax then run regular query and render index view
+			posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit });
+		  res.render('posts/index', { 
+				title: 'Posts Index', 
+				page: 'posts', 
+				posts: posts.docs,
+				pageNumber: posts.page, 
+				pageCount: posts.pages,
+		    itemCount: posts.limit,
+		    pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page) 
+		  });
 	}
-  res.render('posts/index', { 
-		title: 'Posts Index', 
-		page: 'posts', 
-		posts: posts.docs,
-		pageNumber: posts.page, 
-		pageCount: posts.pages,
-    itemCount: posts.limit,
-    pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page) 
-  });
 }));
 
 // NEW

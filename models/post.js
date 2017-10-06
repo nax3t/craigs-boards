@@ -10,10 +10,10 @@ const PostSchema = new Schema({
 	lat: Number,
 	lng: Number,
 	image: String,
-	comments: [
+	reviews: [
 		{
 		   type: mongoose.Schema.Types.ObjectId,
-		   ref: "Comment"
+		   ref: "Review"
 		}
 	],
 	author: {

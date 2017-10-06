@@ -8,11 +8,11 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const flash = require('connect-flash');
 const session = require('express-session');
-const expressSanitizer = require("express-sanitizer");
+const expressSanitizer = require('express-sanitizer');
 const mongoose = require('mongoose');
 const passport = require('passport');
-const LocalStrategy = require("passport-local").Strategy;
-const methodOverride = require("method-override");
+const LocalStrategy = require('passport-local').Strategy;
+const methodOverride = require('method-override');
 const engine = require('ejs-mate');
 const User = require('./models/user');
 const configAuth = require('./config/auth'); // is this needed?
@@ -20,7 +20,7 @@ const seedDB = require('./seeds');
 
 const index 		= require('./routes/index');
 const posts 		= require('./routes/posts');
-const comments  = require('./routes/comments');
+const reviews  = require('./routes/reviews');
 
 const app = express();
 
@@ -83,7 +83,7 @@ app.use(function(req, res, next){
 
 app.use('/', index);
 app.use('/posts', posts);
-app.use('/posts/:id/comments', comments);
+app.use('/posts/:id/reviews', reviews);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

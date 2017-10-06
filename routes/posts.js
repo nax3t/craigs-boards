@@ -59,7 +59,7 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 			if (location) query.push({ location: new RegExp(location, 'gi') });
 			posts = await Post.paginate({
 				$and: query
-			}, { page: req.query.page, limit: req.query.limit });
+			}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
 			// send back json with status of 200 (OK)
 			res.status(200).json({
 				posts: posts.docs,
@@ -71,7 +71,7 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 				prevUrl: paginate.href(req)(true)
 			});
 	} else if (req.xhr && !filters) {
-			posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit });
+			posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
 			// send back json with status of 200 (OK)
 			res.status(200).json({
 				posts: posts.docs,
@@ -84,7 +84,7 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 			});
 	} else {
 			// if request wasn't sent with ajax then run regular query and render index view
-			posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit });
+			posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
 		  res.render('posts/index', { 
 				title: 'Posts Index', 
 				page: 'posts', 
@@ -130,8 +130,8 @@ router.post('/', isLoggedIn, upload.single('image'), sanitizeBody, (req, res, ne
 router.get('/:id', (req, res, next) => {
 	Post.findById(req.params.id).populate(
 		{
-		  path: 'comments',
-		  model: 'Comment',
+		  path: 'reviews',
+		  model: 'Review',
 		  options: { sort: {'_id': '-1'} },
 		  populate: {
 		    path: 'author',

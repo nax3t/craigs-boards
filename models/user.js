@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt   = require('bcrypt-nodejs');
 const Post = require('./post');
-const Comment = require('./comment');
+const Review = require('./review');
 
 const UserSchema = mongoose.Schema({
     local: {
@@ -30,11 +30,11 @@ UserSchema.methods.validPassword = function(password) {
     return bcrypt.compareSync(password, this.local.password);
 };
 
-// pre-hook middleware to delete all user's posts and comments from db when user is deleted
+// pre-hook middleware to delete all user's posts and reviews from db when user is deleted
 UserSchema.pre('remove', async function(next) {
   try {
       await Post.remove({ 'author': { '_id': this._id } });
-      await Comment.remove({ 'author': { '_id': this._id } });
+      await Review.remove({ 'author': { '_id': this._id } });
       next();
   } catch (err) {
       // does this work?

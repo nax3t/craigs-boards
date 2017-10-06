@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const CommentSchema = new Schema({
+const ReviewSchema = new Schema({
 	body: String,
 	author: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -10,4 +10,4 @@ const CommentSchema = new Schema({
 	createdAt: { type: Date, default: Date.now }
 });
 
-module.exports = mongoose.model('Comment', CommentSchema);
+module.exports = mongoose.model('Review', ReviewSchema);

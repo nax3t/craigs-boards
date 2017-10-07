@@ -20,8 +20,8 @@ router.post("/", isLoggedIn, (req, res, next) => {
 		req.body.review.author = req.user._id;
 		Review.create(req.body.review, (err, review) => {
 			if(err) {
-				req.flash('error', err.message);
-				return res.redirect('back');
+				console.log(err.message);
+				return res.status(500).json(err);
 			}
 			post.reviews.push(review);
 			post.save(() => {

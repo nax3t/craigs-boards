@@ -21,14 +21,9 @@ body {
 	width: 100%;
 }
 
-/* Hide comment edit form */
-.comment-edit-form {
+/* Hide review form */
+#review-form {
 	display: none;
-}
-
-/* Style edit comment button */
-.edit-comment:hover {
-	color: red;
 }
 
 /* Sticky Footer*/

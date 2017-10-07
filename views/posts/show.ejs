@@ -83,17 +83,20 @@
       <div class="card-header">
         Reviews
       </div>
-      <div class="card-body">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
+      <div class="card-body" id="reviews">
+      	<% post.reviews.forEach(function(review) { %>
+        <p><%- review.body %></p>
+        <small class="text-muted">Posted by <%= review.author.local.username || review.author.facebook.name %> <%= moment(review.createdAt).fromNow() %></small>
         <hr>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-        <hr>
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Omnis et enim aperiam inventore, similique necessitatibus neque non! Doloribus, modi sapiente laboriosam aperiam fugiat laborum. Sequi mollitia, necessitatibus quae sint natus.</p>
-        <small class="text-muted">Posted by Anonymous on 3/1/17</small>
-        <hr>
-        <a href="#" class="btn btn-success">Leave a Review</a>
+      	<% }); %>
+        <button class="btn btn-success" id="toggle-review">Leave a Review</button>
+        <form action="/posts/<%= post.id %>/reviews" class="mt-2" id="review-form">
+        	<div class="form-group">
+        	  <label for="review-body">Body</label>
+        	  <textarea class="form-control" id="review-body" rows="3" name="review[body]" placeholder="Tell us how you feel..."></textarea>
+        	</div>
+        	<button type="submit" class="btn btn-primary">Submit</button>
+        </form>
       </div>
     </div>
     <!-- /.card -->

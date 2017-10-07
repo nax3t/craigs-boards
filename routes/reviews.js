@@ -18,6 +18,7 @@ router.post("/", isLoggedIn, (req, res, next) => {
 			return res.redirect('back');
 		}
 		req.body.review.author = req.user._id;
+		req.body.review.body = req.sanitize(req.body.review.body);
 		Review.create(req.body.review, (err, review) => {
 			if(err) {
 				console.log(err.message);

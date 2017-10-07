@@ -1,0 +1,39 @@
+<!-- Modal -->
+<div class="modal fade" id="loginModal" tabindex="-1" role="dialog" aria-labelledby="loginModal" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Please sign in</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form class="form-signin" action="/login?redirect=<%= post.id %>" method="POST">
+          <label for="inputUsername" class="sr-only">Username</label>
+          <input type="text" id="inputUsername" class="form-control" name="username" placeholder="Username" required autofocus>
+          <label for="inputPassword" class="sr-only">Password</label>
+          <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required>
+	        <!-- Should we use a remember me button to extend the expiry? -->
+	        <!--   <div class="checkbox">
+	            <label>
+	              <input type="checkbox" value="remember-me"> Remember me
+	            </label>
+	          </div> -->
+          <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+        </form>
+
+        <a href="/auth/facebook/login">
+          <button class="btn btn-lg btn-primary">
+            <i class="fa fa-facebook-official" aria-hidden="true"></i> Log in with Facebook
+          </button>
+        </a>
+
+        <a href="/forgot">Forgot password?</a>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>

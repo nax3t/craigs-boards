@@ -84,7 +84,6 @@ module.exports = (passport) => {
       passReqToCallback : true // allows us to pass back the entire request to the callback
   },
   (req, username, password, done) => { // callback with username and password from our form
-
       // find a user whose username is the same as the forms username
       // we are checking to see if the user trying to login already exists
       User.findOne({ 'local.username' :  username }, (err, user) => {

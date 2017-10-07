@@ -32,11 +32,18 @@ router.get('/login', (req, res) => {
 	res.render('users/login', {title: 'User Login', page: 'login'});
 });
 
-router.post('/login', passport.authenticate('local-login', {
-    successRedirect : '/', // redirect to the secure profile section
-    failureRedirect : '/login', // redirect back to the signup page if there is an error
-    failureFlash : 'Incorrect username or password' // set error flash message
-}));
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local-login', (err, user, info) => {
+    if (err) { return next(err); }
+    if (!user) { return res.redirect('/login'); }
+    req.logIn(user, (err) => {
+      if (err) { return next(err); }
+      var redirectTo = req.session.redirectTo ? req.session.redirectTo : req.query.redirect ? `/posts/${ req.query.redirect }` : '/';
+      delete req.session.redirectTo;
+      res.redirect(redirectTo);
+    });
+  })(req, res, next);
+});
 
 router.get('/profile', isLoggedIn, asyncMiddleware(async (req, res, next) => {
   res.render('users/profile', {title: 'User Profile'});

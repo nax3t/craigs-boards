@@ -1,50 +1,6 @@
 <% layout('layouts/boilerplate') -%>
 
-<!-- <div class="row">
-	<div class="col-md-4 col-offset-4">
-		<div class="card" style="width: 20rem;">
-			<img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>">
-			<div class="card-body">
-			  <h4 class="card-title"><%= post.title %></h4>
-			  <p><strong>Condition:</strong> <%= post.condition %></p>
-			  <p><strong>Price:</strong> $<%= post.price %>.00</p>
-			  <p class="card-text"><%- post.description %></p>
-				<p>Posted by: <%= post.author.local.username || post.author.facebook.name %> <%= moment(post.createdAt).fromNow() %></p>
-			</div>
-		</div>
-		<% if(currentUser && currentUser.equals(post.author)) { %>
-		<a class="btn btn-outline-warning" href="/posts/<%= post.id %>/edit" role="button">Edit</a>
-		<form action="/posts/<%= post.id %>?_method=DELETE" method="POST" class="delete-form">
-			<input type="submit" class="btn btn-outline-danger" value="Delete">
-		</form>
-		<% } %>
-		<% if(currentUser) { %>
-		<form action="/posts/<%= post.id %>/comments" method="POST" id="comment-form">
-			<div class="form-group">
-				<label for="comment-body">Comment</label>
-				<input type="text" id="comment-body" name="comment[body]" class="form-control" placeholder="Have any questions?" required>
-			</div>
-			<div class="form-group">	
-				<button type="submit" class="btn btn-default" id="comment-submit">Submit</button>
-			</div>
-		</form>
-		<% } %>
-		<h2>Comments</h2>
-		<div id="comments">
-		<% post.reviews.forEach((review) => { %>
-			<form action="/posts/<%= post.id %>/reviews/<%= review.id %>" class="form-inline review-edit-form">
-				<input type="text" name="review[body]" class="form-control" value="<%= review.body %>">
-				<input type="submit" class="btn btn-default" value="Update">
-			</form>
-			<p>
-				<i class="fa fa-pencil-square-o edit-review" aria-hidden="true"></i> <strong><%= review.author.local.username || review.author.facebook.name %></strong> - <%= review.body %> 
-			</p>
-			<hr>
-		<% }); %>
-		</div>
-		<div id="map"></div>
-	</div>
-</div> -->
+<% include ../partials/login-modal %>
 
 <div class="row">
 
@@ -117,9 +73,10 @@
 	      scrollwheel: false
 	  });
 	  var contentString = `
-	    <strong><%= post.title %><br />
-	    <%= post.location %></strong>
-	    <p><%= post.description %></p>
+	    <p>
+        <strong><%= post.title %></strong><br>
+        <small><%= post.location %></small>
+      </p>
 	  `
 	  var infowindow = new google.maps.InfoWindow({
 	    content: contentString

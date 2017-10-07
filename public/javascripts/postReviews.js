@@ -1,8 +1,16 @@
 $(function() {
 	$('#toggle-review').click(function() {
-		$('#review-form').slideToggle('slow');
-		$('#review-body').focus();
-		$('html, body').animate({ scrollTop: $('#review-body').offset().top }, 600);
+		var isLoggedIn = $('.dropdown-item[href="/logout"]').length;
+		if(isLoggedIn) {
+				$('#review-form').slideToggle('slow');
+				$('#review-body').focus();
+				$('html, body').animate({ scrollTop: $('#review-body').offset().top }, 600);
+		} else {
+				$('#loginModal').modal();
+				$('#loginModal').on('shown.bs.modal', function () {
+				  $('#inputUsername').focus()
+				});
+		}
 	});
 
 	$('#review-form').submit(function(e) {

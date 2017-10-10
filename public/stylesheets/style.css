@@ -21,8 +21,8 @@ body {
 	width: 100%;
 }
 
-/* Hide review form */
-#review-form {
+/* Hide comment form */
+#comment-form {
 	display: none;
 }
 

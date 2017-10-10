@@ -37,19 +37,19 @@
 
     <div class="card card-outline-secondary my-4">
       <div class="card-header">
-        Reviews
+        Questions & Comments
       </div>
-      <div class="card-body" id="reviews">
-      	<% post.reviews.forEach(function(review) { %>
-        <p><%- review.body %></p>
-        <small class="text-muted">Posted by <%= review.author.local.username || review.author.facebook.name %> <%= moment(review.createdAt).fromNow() %></small>
+      <div class="card-body" id="comments">
+      	<% post.comments.forEach(function(comment) { %>
+        <p><%- comment.body %></p>
+        <small class="text-muted">Posted by <%= comment.author.local.username || comment.author.facebook.name %> <%= moment(comment.createdAt).fromNow() %></small>
         <hr>
       	<% }); %>
-        <button class="btn btn-success" id="toggle-review">Leave a Review</button>
-        <form action="/posts/<%= post.id %>/reviews" class="mt-2" id="review-form">
+        <button class="btn btn-success" id="toggle-comment">Leave a comment</button>
+        <form action="/posts/<%= post.id %>/comments" class="mt-2" id="comment-form">
         	<div class="form-group">
-        	  <label for="review-body">Body</label>
-        	  <textarea class="form-control" id="review-body" rows="3" name="review[body]" placeholder="Tell us how you feel..."></textarea>
+        	  <label for="comment-body" class="sr-only">Body</label>
+        	  <textarea class="form-control" id="comment-body" rows="3" name="comment[body]" placeholder="Tell us how you feel..."></textarea>
         	</div>
         	<button type="submit" class="btn btn-primary">Submit</button>
         </form>

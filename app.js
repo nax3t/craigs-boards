@@ -20,7 +20,7 @@ const seedDB = require('./seeds');
 
 const index 		= require('./routes/index');
 const posts 		= require('./routes/posts');
-const reviews  = require('./routes/reviews');
+const comments  = require('./routes/comments');
 
 const app = express();
 
@@ -83,7 +83,7 @@ app.use(function(req, res, next){
 
 app.use('/', index);
 app.use('/posts', posts);
-app.use('/posts/:id/reviews', reviews);
+app.use('/posts/:id/comments', comments);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

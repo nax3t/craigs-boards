@@ -1,10 +1,10 @@
 $(function() {
-	$('#toggle-review').click(function() {
+	$('#toggle-comment').click(function() {
 		var isLoggedIn = $('.dropdown-item[href="/logout"]').length;
 		if(isLoggedIn) {
-				$('#review-form').slideToggle('slow');
-				$('#review-body').focus();
-				$('html, body').animate({ scrollTop: $('#review-body').offset().top }, 600);
+				$('#comment-form').slideToggle('slow');
+				$('#comment-body').focus();
+				$('html, body').animate({ scrollTop: $('#comment-body').offset().top }, 600);
 		} else {
 				$('#loginModal').modal();
 				$('#loginModal').on('shown.bs.modal', function () {
@@ -13,22 +13,23 @@ $(function() {
 		}
 	});
 
-	$('#review-form').submit(function(e) {
+	$('#comment-form').submit(function(e) {
 		e.preventDefault();
 		var formData = $(this).serialize();
 		var url = $(this).attr('action');
 		$.post(url, formData)
 			.done(function(data) {
-				$('#review-body').val('');
-				$('#review-form').slideToggle('slow');
-				$('#reviews').prepend(`
-					<p>${ data.review.body }</p>
-					<small class="text-muted">Posted by ${ data.author } ${ moment(data.review.createdAt).fromNow() }</small>
+				$('#comment-body').val('');
+				$('#comment-form').slideToggle('slow');
+				$('#comments').prepend(`
+					<p>${ data.comment.body }</p>
+					<small class="text-muted">Posted by ${ data.author } ${ moment(data.comment.createdAt).fromNow() }</small>
 					<hr>		
 				`);
 				$('html, body').animate({ scrollTop: $('.delete-form').offset().top }, 600);
 			})
 			.fail(function(jqXHR, exception) {
+				debugger
 				alert(exception);
 			});
 	});

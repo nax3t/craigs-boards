@@ -130,8 +130,8 @@ router.post('/', isLoggedIn, upload.single('image'), sanitizeBody, (req, res, ne
 router.get('/:id', (req, res, next) => {
 	Post.findById(req.params.id).populate(
 		{
-		  path: 'reviews',
-		  model: 'Review',
+		  path: 'comments',
+		  model: 'Comment',
 		  options: { sort: {'_id': '-1'} },
 		  populate: {
 		    path: 'author',

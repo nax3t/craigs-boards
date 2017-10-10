@@ -2,26 +2,57 @@
 $(function() {
 	// store clean form for comparison later
 	var cleanForm = $('#post-filter-form').serialize();
-
-	function formListener(e) {
+	// declare global latLngQuery variable for later use
+	var latLngQuery;
+	function formSubmit(e) {
 		// prevent form from submitting
 		e.preventDefault();
+		// if distance field is filled out then make sure location is also filled out
+		if($('#distance').val() && !$('#location').val()) {
+			$('#location').focus().after('<div class="form-validation">Location required if distance entered</div>');
+			$('.form-validation').delay(3000).fadeOut('slow');
+			return;
+		}
 		// pull data from form body
 		var formData = $(this).serialize();
 		// pull url from form action
 		var url = this.action;
-		// submit GET request to form action with formData as query string
-		$.ajax({
-				url: url,
-				data: formData,
-				method: 'GET',
-				formData: formData
-			})
-		  .done(paintDom)
-  		.fail(handleError);
+		// check for location
+		var location = $('#location').val();
+		if(location) {
+				// geocode location input value
+				geocoder.geocode( { 'address': location }, function(results, status) {
+		      if (status == 'OK') {
+		      		// add lat and lng to query string
+		      		latLngQuery = `&post%5Blongitude%5D=${ results[0].geometry.location.lng() }&post%5Blatitude%5D=${ results[0].geometry.location.lat() }`;
+		        	formData += latLngQuery;
+							// submit GET request to form action with formData as query string
+							$.ajax({
+									url: url,
+									data: formData,
+									method: 'GET',
+									formData: formData
+								})
+							  .done(paintDom)
+					  		.fail(handleError);
+		      } else {
+		        	alert('Geocode was not successful for the following reason: ' + status);
+		      }
+		    });
+		} else {
+				// submit GET request to form action with formData as query string
+				$.ajax({
+						url: url,
+						data: formData,
+						method: 'GET',
+						formData: formData
+					})
+				  .done(paintDom)
+		  		.fail(handleError);
+		}
 	};
 
-	function pageBtnListener(e) {
+	function pageBtnClick(e) {
 		// prevent form from submitting
 		e.preventDefault();
 		// pull url from link href
@@ -63,10 +94,18 @@ $(function() {
 		var paginateTemplate = ``;
 		// pull filter data from the form
 		var formData = $('#post-filter-form').serialize();
+		// check if location input filled out
+		var location = $('#location').val();
+		if(location) {
+			// add preexisting lat and lng values to formData query
+			formData += latLngQuery;	
+		};
 		// check if form is filled out
 		if (cleanForm === formData) formData = '';
 		// check if has_previous pages and add prev button
 		if (data.has_prev) {
+			// remove erroneous &page= from data.prevUrl
+			data.prevUrl = data.prevUrl.replace('post=', '');
 			paginateTemplate += `
 			<li class="page-item">
 				<a href="${ data.prevUrl }${ formData ? '&' + formData : '' }" class="page-link" aria-label="Previous">
@@ -78,26 +117,31 @@ $(function() {
 		// check is there are multiple pages and add page number buttons
 		if (data.pages.length > 1) {
 			data.pages.forEach(function(page) {
+				// remove erroneous &page= from page.url
+				page.url = page.url.replace('post=', '');
 				paginateTemplate += `<li class="page-item ${ page.number === data.pageNumber ? 'active' : '' }"><a href="${ page.url }${ formData ? '&' + formData : '' }" class="page-link">${ page.number }</a></li>`;
 			});
 		}
 		// check if has_next pages
 		if (data.has_next) {
-		// add next button to page numbers
-		paginateTemplate += `
-			<li class="page-item">
-				<a href="${ data.nextUrl }${ formData ? '&' + formData : '' }" class="page-link" aria-label="Next">
-					<span aria-hidden="true">&raquo;</span>
-				</a>
-			</li>
-			`
+			// remove erroneous &page= from data.nextUrl
+			data.nextUrl = data.nextUrl.replace('post=', '');
+			// add next button to page numbers
+			paginateTemplate += `
+				<li class="page-item">
+					<a href="${ data.nextUrl }${ formData ? '&' + formData : '' }" class="page-link" aria-label="Next">
+						<span aria-hidden="true">&raquo;</span>
+					</a>
+				</li>
+				`
 		}
 		// if paginate buttons exist then add them to the DOM
 		if (paginateTemplate) $('ul.pagination').html(paginateTemplate);
-
-		// update map with visible posts
-		posts = data.posts;
-		initMap();
+		// if posts exist then update map with visible posts
+		if(data.posts.length) {
+			posts = data.posts;
+			initMap();
+		}
 	};
 
 	// handle failed AJAX requests
@@ -106,9 +150,7 @@ $(function() {
 	};
 
 	// listen for submit event on post filter form from /posts index
-	$('#post-filter-form').on({
-		'change submit': formListener
-	});
+	$('#post-filter-form').on('submit', formSubmit);
 	// add click listener for any pagination button clicks and submit query
-	$('ul.pagination').on('click', '.page-link', pageBtnListener);
+	$('ul.pagination').on('click', '.page-link', pageBtnClick);
 });

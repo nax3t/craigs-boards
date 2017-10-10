@@ -1,5 +1,5 @@
 <% layout('layouts/boilerplate') -%>
-
+<h1>New Post</h1>
 <form action="/posts" method="POST" enctype="multipart/form-data">
   <div class="form-group">
     <label for="input-title">Title</label>
@@ -35,7 +35,7 @@
     <input type="file" id="input-image" name="image" accept="image/*" required>
   </div>
 
-  <button type="submit" class="btn btn-default">Submit</button>
+  <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 <!-- Google Places API -->

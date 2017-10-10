@@ -64,8 +64,8 @@
 
 <script>
 	function initMap() {
-	  var lat = <%= post.lat %>;
-	  var lng = <%= post.lng %>;
+	  var lat = <%= post.coordinates[1] %>;
+	  var lng = <%= post.coordinates[0] %>;
 	  var center = {lat: lat, lng: lng };
 	  var map = new google.maps.Map(document.getElementById('map'), {
 	      zoom: 8,

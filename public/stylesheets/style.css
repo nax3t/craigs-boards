@@ -41,3 +41,8 @@ body {
 #condition-legend {
 	font-size: 1rem;
 }
+
+/* Style form validation messages */
+.form-validation {
+  color: red;
+}

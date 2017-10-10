@@ -3,10 +3,18 @@ const router = express.Router();
 const passport = require('passport');
 const User = require('../models/user');
 const Post = require('../models/post');
-const paginate = require('express-paginate');
-const geocoder = require('geocoder');
+// const geocoder = require('geocoder');
 const middleware = require('../middleware');
-const { asyncMiddleware, isLoggedIn, sanitizeBody, checkPostOwner } = middleware;
+const { asyncMiddleware, isLoggedIn, sanitizeBody, checkPostOwner, findLocation } = middleware;
+// require and configure express-paginate
+const paginate = require('express-paginate');
+router.use(paginate.middleware(9, 50));
+// require and configure node-geocoder
+const NodeGeocoder = require('node-geocoder');
+const options = {
+  provider: 'google'
+};
+const geocoder = NodeGeocoder(options);
 
 //************* Image Upload Configuration *************\\
 const multer = require('multer');
@@ -35,28 +43,43 @@ cloudinary.config({
 });
 //************* END Image Upload Config *************\\
 
-router.use(paginate.middleware(6, 50));
-
 // INDEX
 router.get('/', asyncMiddleware(async (req, res, next) => {
-	let posts;
+	let posts, filters;
 	// check if filters exist
-	if (req.query.post) var filters = Object.values(req.query.post).join('') ? true : false;
+	if (req.query.post) filters = Object.values(req.query.post).join('') ? true : false;
+
 	// check if request sent with ajax and has filter(s)
 	if (req.xhr && filters) {
-			let { search, condition, price, location } = req.query.post;
+			let { search, condition, price, location, longitude, latitude  } = req.query.post;
 			let query = [];
 			// build $and query array
 			if (search) {
 				search = new RegExp(search, 'gi');
-				query.push({ $or: [ { title: search }, { description: search  } ] });
+				query.push({ $or: [ { title: search }, { description: search  }, { location: search } ] });
 			}
 			if (condition) {
 				if (Array.isArray(condition)) condition = '(' + condition.join('?|') + '?)';
 				query.push({ condition: new RegExp(condition, 'gi') });
 			}
 			if (price) query.push({ price: price });
-			if (location) query.push({ location: new RegExp(location, 'gi') });
+			if (location && longitude && latitude) {
+				// get the max distance or set it to 25 mi
+				let maxDistance = req.query.post.distance || 25;
+				// we need to convert the distance to degrees, one degree is approximately 69 miles
+				maxDistance /= 69;
+				// get coordinates [ <longitude> , <latitude> ]
+				let coords = [
+					longitude,
+					latitude
+				];
+				query.push({ 
+		    	coordinates: {
+		      	$near: coords,
+		      	$maxDistance: maxDistance
+		    	} 
+		    });
+			}
 			posts = await Post.paginate({
 				$and: query
 			}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });

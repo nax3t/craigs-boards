@@ -126,28 +126,20 @@ router.get('/new', isLoggedIn, (req, res, next) => {
 });
 
 // CREATE
-router.post('/', isLoggedIn, upload.single('image'), sanitizeBody, (req, res, next) => {
+router.post('/', isLoggedIn, upload.single('image'), sanitizeBody, asyncMiddleware(async (req, res, next) => {
 	if(!req.file) {
 		req.flash('error', 'Please upload an image.');
 		return res.redirect('/posts/new');
 	}
-	cloudinary.uploader.upload(req.file.path, async (result) => { 
-		geocoder.geocode(req.body.post.location, async (err, data) => {
-	    req.body.post.lat = data.results[0].geometry.location.lat;
-	    req.body.post.lng = data.results[0].geometry.location.lng;
-			req.body.post.author = req.user._id;
-			req.body.post.image = result.secure_url;
-			try {
-					let post = await Post.create(req.body.post);
-					req.flash('success', 'Post created successfully!');
-				  res.redirect(`/posts/${post.id}`);
-			} catch (err) {
-					// test this to be sure it works
-					return next(err);
-			}
-	  });
-	});
-});
+	let result = await cloudinary.uploader.upload(req.file.path);
+	let geoLocation = await geocoder.geocode(req.body.post.location);
+  req.body.post.coordinates = [geoLocation[0].longitude, geoLocation[0].latitude];
+	req.body.post.author = req.user._id;
+	req.body.post.image = result.secure_url;
+	let post = await Post.create(req.body.post);
+	req.flash('success', 'Post created successfully!');
+  res.redirect(`/posts/${post.id}`);
+}));
 
 // SHOW
 router.get('/:id', (req, res, next) => {

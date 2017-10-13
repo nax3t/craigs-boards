@@ -48,7 +48,6 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 	let posts, filters;
 	// check if filters exist
 	if (req.query.post) filters = Object.values(req.query.post).join('') ? true : false;
-
 	// check if request sent with ajax and has filter(s)
 	if (req.xhr && filters) {
 			let { search, condition, price, location, longitude, latitude  } = req.query.post;
@@ -63,7 +62,7 @@ router.get('/', asyncMiddleware(async (req, res, next) => {
 				query.push({ condition: new RegExp(condition, 'gi') });
 			}
 			if (price) query.push({ price: price });
-			if (location && longitude && latitude) {
+			if (longitude && latitude) {
 				// get the max distance or set it to 25 mi
 				let maxDistance = req.query.post.distance || 25;
 				// we need to convert the distance to degrees, one degree is approximately 69 miles

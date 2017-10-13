@@ -24,7 +24,7 @@ const seedDB = async () => {
 							description: faker.lorem.sentence(),
 							price: faker.commerce.price(),
 							condition: conditions[random3],
-							image: 'https://images.unsplash.com/photo-1439367774447-505de3bd8423?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=1080&fit=max&s=49e687873fe2e886a6b7a0fbe333f29d',
+							image: faker.image.imageUrl(),
 							location: `${cities[random1000].city}, ${cities[random1000].state}`,
 							coordinates: [cities[random1000].longitude, cities[random1000].latitude],
 							author: user

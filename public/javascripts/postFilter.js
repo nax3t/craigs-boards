@@ -139,8 +139,8 @@ $(function() {
 		if (paginateTemplate) $('ul.pagination').html(paginateTemplate);
 		// if posts exist then update map with visible posts
 		if(data.posts.length) {
-			posts = data.posts;
-			initMap();
+			// load post markers to map
+			loadMarkers(data.posts);
 		}
 	};
 

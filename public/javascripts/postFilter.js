@@ -4,8 +4,9 @@ $(function() {
 	var cleanForm = $('#post-filter-form').serialize();
 	// declare global latLngQuery variable for later use
 	var latLngQuery;
+	// define function that handles filter form submission
 	function formSubmit(e) {
-		// prevent form from submitting
+		// prevent default form submission behavior
 		e.preventDefault();
 		// if distance field is filled out then make sure location is also filled out
 		if($('#distance').val() && !$('#location').val()) {
@@ -64,7 +65,6 @@ $(function() {
 	};
 
 	function paintDom(data) {
-		console.log(data);
 		// clear currently loaded posts
 		$('#posts-row').html('');
 		// loop over posts and append each to DOM
@@ -139,8 +139,11 @@ $(function() {
 		if (paginateTemplate) $('ul.pagination').html(paginateTemplate);
 		// if posts exist then update map with visible posts
 		if(data.posts.length) {
-			// load post markers to map
-			loadMarkers(data.posts);
+				// load post markers to map
+				loadMarkers(data.posts);
+		} else {
+				// no posts to load so remove all markers from map
+				markerCluster.clearMarkers()
 		}
 	};
 

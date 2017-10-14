@@ -48,15 +48,6 @@
 	
 	<div class="col-lg-9">
 
-<!-- 		<button id="user-location" class="btn btn-default mb-3 float-sm-right float-xs-left"><i class="fa fa-crosshairs" aria-hidden="true"></i> Use My Location</button>
-		<form class="form-inline" id="address-form">
-		  <div class="form-group mb-3">
-		    <label for="address" class="sr-only">Zip Code/Address</label>
-		    <input type="text" name="address" class="form-control" id="address" placeholder="Zip Code/Address">
-		  </div>
-		  <button type="submit" class="btn btn-primary mb-3 ml-1">Search</button>
-		</form> -->
-
 		<div id="map" class="mb-4 rounded"></div>
 
 		<div class="row" id="posts-row">
@@ -117,7 +108,7 @@
 <!-- /.row -->
 
 <script>
-	var map, infoWindow, geocoder, loadMarkers;
+	var map, infoWindow, geocoder, markerCluster, markers, loadMarkers;
 	var posts = <%- JSON.stringify(posts) %>
 
 	function initMap() {
@@ -129,7 +120,7 @@
 		});
 
 		loadMarkers = function(posts) {
-			var markers = [];
+			markers = [];
 			var bounds = new google.maps.LatLngBounds();
 
 			for (var i = 0; i < posts.length; i++) {
@@ -137,6 +128,7 @@
 			  var marker = new google.maps.Marker({
 	        position: latLng,
 	        label: posts[i].title,
+	        animation: google.maps.Animation.DROP,
 	        url: '/posts/' + posts[i]._id
 	      });
 	      google.maps.event.addListener(marker, 'click', function() {
@@ -148,11 +140,12 @@
 
 			map.fitBounds(bounds);
 
-			var markerCluster = new MarkerClusterer(map, markers,
+			markerCluster = new MarkerClusterer(map, markers,
 	            {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 		}
-
+		// load all post markers
 		loadMarkers(posts);
+
 		// Get user location
 		getLocation();
 
@@ -173,6 +166,9 @@
 	        infoWindow.setPosition(pos);
 	        infoWindow.setContent('You are here.');
 	        infoWindow.open(map);
+	        window.setTimeout(function() {
+	        	infoWindow.close();
+	        }, 3000);
 
 	        map.setCenter(pos);
 	        map.setZoom(10);
@@ -264,8 +260,13 @@
 			if (paginateTemplate) $('ul.pagination').html(paginateTemplate);
 			// if posts exist then update map with visible posts
 			if(data.posts.length) {
-				// load post markers to map
-				loadMarkers(data.posts);
+					// clear current markers
+					markerCluster.clearMarkers();
+					// load post markers to map
+					loadMarkers(data.posts);
+			} else {
+					// no posts to load so clear any markers
+					markerCluster.clearMarkers()
 			}
 		};
 

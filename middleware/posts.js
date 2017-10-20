@@ -1,5 +1,4 @@
 const Post = require('../models/post');
-// const User = require('../models/user');
 const paginate = require('express-paginate');
 const geocoder = require('../config/geocoder');
 const { cloudinary } = require('../config/cloudinary');

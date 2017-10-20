@@ -139,11 +139,13 @@ $(function() {
 		if (paginateTemplate) $('ul.pagination').html(paginateTemplate);
 		// if posts exist then update map with visible posts
 		if(data.posts.length) {
+				// clear existing markers
+				markerCluster.clearMarkers();
 				// load post markers to map
 				loadMarkers(data.posts);
 		} else {
 				// no posts to load so remove all markers from map
-				markerCluster.clearMarkers()
+				markerCluster.clearMarkers();
 		}
 	};
 

@@ -18,7 +18,11 @@
           </div>
         </li>
       </ul>
-      <ul class="navbar-nav ml-auto">
+      <form action="/posts" method="GET" class="form-inline mt-2 mt-md-0" id="post-filter-form">
+        <input class="form-control mr-sm-2" type="text" placeholder="Search" aria-label="Search">
+        <button class="btn btn-outline-primary my-2 my-sm-0" type="submit" name="post[search]">Search</button>
+      </form>
+      <ul class="navbar-nav ml-2">
         <li class="nav-item dropdown">
           <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
           <div class="dropdown-menu" aria-labelledby="dropdown01">

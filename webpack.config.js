@@ -5,7 +5,6 @@ module.exports = {
 		'./src/init-map',
 		'./src/close-alerts.js',
 		'./src/activate-places-search.js',
-		'./src/zip-search.js',
 		'./src/post-comments.js'
 	],
 	output: {

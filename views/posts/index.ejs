@@ -5,10 +5,6 @@
   <div class="col-lg-3">
     <h3>Filter By:</h3>
     <form action="/posts" method="GET" id="post-filter-form">
-    	<div class="form-group">
-	    	<label for="search">Search</label>
-	    	<input type="text" class="form-control" id="search" name="post[search]" placeholder="Search">
-	    </div>
     	<fieldset>
     		<legend id="condition-legend">Condition</legend>
     		<div class="form-check form-check-inline">
@@ -40,14 +36,13 @@
 	    	<input type="number" class="form-control" id="distance" name="post[distance]" min="0" step="1" max="600" placeholder="Distance">
 	    </div>
 
-    	<input type="submit" class="btn btn-primary btn-block mb-3" role="button" value="Go!">
+    	<input type="submit" class="btn btn-outline-primary btn-block mb-3" role="button" value="Go!">
     </form>
 
   </div> 
   <!-- /.col-lg-3 -->
 	
 	<div class="col-lg-9">
-
 		<div id="map" class="mb-4 rounded"></div>
 
 		<div class="row" id="posts-row">
@@ -61,7 +56,7 @@
 			      </h4>
 			      <h5>$<%= post.price %>.00</h5>
 			      <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
-			      <a href="/posts/<%= post.id %>" class="btn btn-primary">View Board</a>
+			      <a href="/posts/<%= post.id %>" class="btn btn-outline-primary">View Board</a>
 			    </div>
 			    <div class="card-footer">
 			      <small class="text-muted"><%= post.condition %></small>
@@ -107,8 +102,5 @@
 </div>
 <!-- /.row -->
 
-<script>
-
-</script>
 <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js"></script>
 <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkG51lwJtDvYFKTBdRZlhzYg1D4QFsXPU&callback=initMap"></script>

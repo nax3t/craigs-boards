@@ -70,8 +70,7 @@
 __webpack_require__(1);
 __webpack_require__(2);
 __webpack_require__(3);
-__webpack_require__(4);
-module.exports = __webpack_require__(5);
+module.exports = __webpack_require__(4);
 
 
 /***/ }),
@@ -329,31 +328,6 @@ window.activatePlacesSearch = activatePlacesSearch;
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-$('#address-form').on('submit', function (e) {
-	e.preventDefault();
-	var zip = $(this).serialize();
-	var geocoderUri = 'http://maps.googleapis.com/maps/api/geocode/json?';
-	var fullUrl = geocoderUri + zip;
-	$.get(fullUrl, function (data) {
-		// if there's an error message visible then remove it
-		$('#zip-error') ? $('#zip-error').fadeOut('slow') : '';
-		if (!data.results.length) {
-			// append error to the DOM
-			var $error = $('<h4 style="color: red;" id="zip-error">Unable to find that adresss/zip code</h4>').hide().appendTo('#address-form').fadeIn('slow');
-		} else {
-			console.log("Location:", data.results[0].geometry.location);
-			map.setCenter(data.results[0].geometry.location);
-		}
-	});
-});
-
-/***/ }),
-/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";

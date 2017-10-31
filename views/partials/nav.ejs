@@ -1,6 +1,6 @@
 <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
   <div class="container">
-    <a class="navbar-brand" href="#"><i class="fa fa-sun-o" aria-hidden="true"></i> Craig's Boards</a>
+    <a class="navbar-brand" href="#"><i class="fa fa-map-marker" aria-hidden="true"></i> Board Maps</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -27,11 +27,11 @@
           <a class="nav-link dropdown-toggle" href="#" id="dropdown01" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Account</a>
           <div class="dropdown-menu" aria-labelledby="dropdown01">
             <% if(currentUser) { %>
-            <a class="dropdown-item" href="/profile">Profile</a>
+            <a class="dropdown-item <%= page === 'profile' ? 'active' : '' %>" href="/profile">Profile</a>
             <a class="dropdown-item" href="/logout">Logout</a>
             <% } else { %>
-            <a class="dropdown-item" href="/login">Login</a>
-            <a class="dropdown-item" href="/signup">Sign Up</a>
+            <a class="dropdown-item <%= page === 'login' ? 'active' : '' %>" href="/login">Login</a>
+            <a class="dropdown-item <%= page === 'signup' ? 'active' : '' %>" href="/signup">Sign Up</a>
             <% } %>
           </div>
         </li>

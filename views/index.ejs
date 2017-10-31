@@ -1,5 +1,12 @@
 <% layout('layouts/boilerplate') -%>
 
-<h1 class="mt-3">Welcome to <%= title %> <%= currentUser != undefined ? currentUser.local.username || currentUser.facebook.name : '' %></h1>
-<p><a class="btn btn-outline-primary btn-lg" href="/posts" role="button">Browse Boards &raquo;</a></p>
-
+<div class="jumbotron">
+  <h1 class="display-3">
+  	Welcome to <%= title %> <%= currentUser != undefined ? currentUser.local.username || currentUser.facebook.name : '' %>
+	</h1>
+  <p class="lead">Your one-stop-shop for all things surf boards</p>
+  <hr class="my-4">
+  <p class="lead">
+    <p><a class="btn btn-outline-primary btn-lg" href="/posts" role="button">Browse Boards &raquo;</a></p>
+  </p>
+</div>

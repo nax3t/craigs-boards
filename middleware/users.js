@@ -10,7 +10,7 @@ passportConfig(passport);
 module.exports = {
 	index: async(req, res, next) => {
 	  let posts = await Post.find();
-	  res.render('index', { title: 'Craig\'s Boards', page: 'home', posts: posts });
+	  res.render('index', { title: 'Board Maps', page: 'home', posts: posts });
 	},
 	getSignup: (req, res) => {
 	  res.render('users/signup', {title: 'User Sign-up', page: 'signup', username: '', email: ''});
@@ -36,7 +36,7 @@ module.exports = {
 	  })(req, res, next);
 	},
 	getProfile: async (req, res, next) => {
-	  res.render('users/profile', {title: 'User Profile'});
+	  res.render('users/profile', {title: 'User Profile', page: 'profile'});
 	},
 	logout: (req, res) => {
 	  req.logout();

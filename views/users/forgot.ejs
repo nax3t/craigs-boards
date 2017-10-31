@@ -2,15 +2,17 @@
 
 <div class="row">
 	<div class="col-md-12">
-		<form action="/forgot" method="POST">
-			<legend>Forgot Password</legend>
-			<div class="form-group">
-				<label for="email">Email</label>
-				<input type="email" name="email" autofocus class="form-control">
-			</div>
-			<div class="form-group">
-				<input type="submit" class="btn btn-primary" value="Reset Password">
-			</div>
-		</form>
+		<div class="form-auth">
+			<form action="/forgot" method="POST">
+				<legend>Forgot Password</legend>
+				<div class="form-group">
+					<label for="email">Email</label>
+					<input type="email" name="email" placeholder="email" autofocus class="form-control">
+				</div>
+				<div class="form-group">
+					<input type="submit" class="btn btn-lg btn-primary btn-block" value="Reset Password">
+				</div>
+			</form>
+		</div>
 	</div>
 </div>

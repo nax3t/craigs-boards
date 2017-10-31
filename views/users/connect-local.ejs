@@ -1,17 +1,23 @@
 <% layout('layouts/boilerplate') -%>
 
-<form class="form-signin" action="/connect/local" method="POST">
-  <h2 class="form-signin-heading">Please sign in</h2>
-  <label for="inputUsername" class="sr-only">Username</label>
-  <input type="text" id="inputUsername" class="form-control" name="username" placeholder="Username" required autofocus>
-  <label for="inputEmail" class="sr-only">Email</label>
-  <input type="email" id="inputEmail" class="form-control" name="email" placeholder="Email" required>
-  <label for="inputPassword" class="sr-only">Password</label>
-  <input type="password" id="inputPassword" class="form-control" name="password" placeholder="Password" required>
+<div class="row">
+	<div class="col-md-6 offset-3">
+		<div class="form-auth">
+			<form class="form-signin" action="/connect/local" method="POST">
+			  <h2 class="form-signin-heading">Connect local</h2>
+			  <label for="inputUsername" class="sr-only">Username</label>
+			  <input type="text" id="inputUsername" class="form-control top" name="username" placeholder="Username" required autofocus>
+			  <label for="inputEmail" class="sr-only">Email</label>
+			  <input type="email" id="inputEmail" class="form-control middle" name="email" placeholder="Email" required>
+			  <label for="inputPassword" class="sr-only">Password</label>
+			  <input type="password" id="inputPassword" class="form-control bottom" name="password" placeholder="Password" required>
 
-  <button class="btn btn-lg btn-warning btn-block" type="submit">Add local</button>
-</form>
+			  <button class="btn btn-lg btn-primary btn-block" type="submit">Connect local</button>
+			</form>
+		</div>
 
-<hr>
+		<hr>
 
-<p><a href="/profile">Go back to profile</a></p>
+		<p><a href="/profile">Go back to profile</a></p>
+	</div>
+</div>

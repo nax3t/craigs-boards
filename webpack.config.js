@@ -3,6 +3,7 @@ const path = require('path');
 module.exports = {
 	entry: [
 		'./src/init-map',
+		'./src/post-filter.js',
 		'./src/close-alerts.js',
 		'./src/activate-places-search.js',
 		'./src/post-comments.js'
@@ -20,9 +21,5 @@ module.exports = {
 			}
 		]
 	},
-	devServer: {
-		port: 3000,
-		contentBase: './build',
-		inline: true
-	}
+	watch: true
 }

@@ -10,13 +10,9 @@ module.exports = {
 		if (req.query.post) filters = Object.values(req.query.post).join('') ? true : false;
 		// check if request sent with ajax and has filter(s)
 		if (req.xhr && filters) {
-				let { search, condition, price, location, longitude, latitude  } = req.query.post;
-				let query = [];
+				let { condition, price, location, longitude, latitude  } = req.query.post;
 				// build $and query array
-				if (search) {
-					search = new RegExp(search, 'gi');
-					query.push({ $or: [ { title: search }, { description: search  }, { location: search } ] });
-				}
+				let query = [];
 				if (condition) {
 					if (Array.isArray(condition)) condition = '(' + condition.join('?|') + '?)';
 					query.push({ condition: new RegExp(condition, 'gi') });
@@ -65,8 +61,8 @@ module.exports = {
 					prevUrl: paginate.href(req)(true)
 				});
 		} else {
-				// if request wasn't sent with ajax then run regular query and render index view
 				posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
+
 			  res.render('posts/index', { 
 					title: 'Posts Index', 
 					page: 'posts', 

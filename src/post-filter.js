@@ -1,161 +1,158 @@
-// document ready
-$(function() {
-	// store clean form for comparison later
-	var cleanForm = $('#post-filter-form').serialize();
-	// declare global latLngQuery variable for later use
-	var latLngQuery;
-	// define function that handles filter form submission
-	function formSubmit(e) {
-		// prevent default form submission behavior
-		e.preventDefault();
-		// if distance field is filled out then make sure location is also filled out
-		if($('#distance').val() && !$('#location').val()) {
-			$('#location').focus().after('<div class="form-validation">Location required if distance entered</div>');
-			$('.form-validation').delay(3000).fadeOut('slow');
-			return;
-		}
-		// pull data from form body
-		var formData = $(this).serialize();
-		// pull url from form action
-		var url = this.action;
-		// check for location
-		var location = $('#location').val();
-		if(location) {
-				// geocode location input value
-				geocoder.geocode( { 'address': location }, function(results, status) {
-		      if (status == 'OK') {
-		      		// add lat and lng to query string
-		      		latLngQuery = `&post%5Blongitude%5D=${ results[0].geometry.location.lng() }&post%5Blatitude%5D=${ results[0].geometry.location.lat() }`;
-		        	formData += latLngQuery;
-							// submit GET request to form action with formData as query string
-							$.ajax({
-									url: url,
-									data: formData,
-									method: 'GET',
-									formData: formData
-								})
-							  .done(paintDom)
-					  		.fail(handleError);
-		      } else {
-		        	alert('Geocode was not successful for the following reason: ' + status);
-		      }
-		    });
-		} else {
-				// submit GET request to form action with formData as query string
-				$.ajax({
-						url: url,
-						data: formData,
-						method: 'GET',
-						formData: formData
-					})
-				  .done(paintDom)
-		  		.fail(handleError);
-		}
-	};
+// store clean form for comparison later
+var cleanForm = $('#post-filter-form').serialize();
+// declare global latLngQuery variable for later use
+var latLngQuery;
+// define function that handles filter form submission
+function formSubmit(e) {
+	// prevent default form submission behavior
+	e.preventDefault();
+	// if distance field is filled out then make sure location is also filled out
+	if($('#distance').val() && !$('#location').val()) {
+		$('#location').focus().after('<div class="form-validation">Location required if distance entered</div>');
+		$('.form-validation').delay(3000).fadeOut('slow');
+		return;
+	}
+	// pull data from form body
+	var formData = $(this).serialize();
+	// pull url from form action
+	var url = this.action;
+	// check for location
+	var location = $('#location').val();
+	if(location) {
+			// geocode location input value
+			geocoder.geocode( { 'address': location }, function(results, status) {
+	      if (status == 'OK') {
+	      		// add lat and lng to query string
+	      		latLngQuery = `&post%5Blongitude%5D=${ results[0].geometry.location.lng() }&post%5Blatitude%5D=${ results[0].geometry.location.lat() }`;
+	        	formData += latLngQuery;
+						// submit GET request to form action with formData as query string
+						$.ajax({
+								url: url,
+								data: formData,
+								method: 'GET',
+								formData: formData
+							})
+						  .done(paintDom)
+				  		.fail(handleError);
+	      } else {
+	        	alert('Geocode was not successful for the following reason: ' + status);
+	      }
+	    });
+	} else {
+			// submit GET request to form action with formData as query string
+			$.ajax({
+					url: url,
+					data: formData,
+					method: 'GET',
+					formData: formData
+				})
+			  .done(paintDom)
+	  		.fail(handleError);
+	}
+};
 
-	function pageBtnClick(e) {
-		// prevent form from submitting
-		e.preventDefault();
-		// pull url from link href
-		var url = $(this).attr('href')
-		// submit GET request to url
-		$.get(url)
-		  .done(paintDom)
-  		.fail(handleError);
-	};
+function pageBtnClick(e) {
+	// prevent form from submitting
+	e.preventDefault();
+	// pull url from link href
+	var url = $(this).attr('href')
+	// submit GET request to url
+	$.get(url)
+	  .done(paintDom)
+		.fail(handleError);
+};
 
-	function paintDom(data) {
-		// clear currently loaded posts
-		$('#posts-row').html('');
-		// loop over posts and append each to DOM
-		data.posts.forEach(function(post) {
-			$('#posts-row').append(`
-				<div class="col-lg-4 col-md-6 mb-4">
-				  <div class="card h-100">
-				    <a href="/posts/${ post._id }"><img class="card-img-top" src="${ post.image }" alt="${ post.title }"></a>
-				    <div class="card-body">
-				      <h4 class="card-title">
-				        <a href="/posts/${ post._id }">${ post.title }</a>
-				      </h4>
-				      <h5>$${ post.price }.00</h5>
-				      <p class="card-text">${ post.description.substring(0, 20) }${ post.description.length > 20 ? '...' : '' }</p>
-				      <a href="/posts/${ post._id }" class="btn btn-primary">View Board</a>
-				    </div>
-				    <div class="card-footer">
-				      <small class="text-muted">${ post.condition }</small>
-				    </div>
-				  </div>
-				</div>
-			`)
+function paintDom(data) {
+	// clear currently loaded posts
+	$('#posts-row').html('');
+	// loop over posts and append each to DOM
+	data.posts.forEach(function(post) {
+		$('#posts-row').append(`
+			<div class="col-lg-4 col-md-6 mb-4">
+			  <div class="card h-100">
+			    <a href="/posts/${ post._id }"><img class="card-img-top" src="${ post.image }" alt="${ post.title }"></a>
+			    <div class="card-body">
+			      <h4 class="card-title">
+			        <a href="/posts/${ post._id }">${ post.title }</a>
+			      </h4>
+			      <h5>$${ post.price }.00</h5>
+			      <p class="card-text">${ post.description.substring(0, 20) }${ post.description.length > 20 ? '...' : '' }</p>
+			      <a href="/posts/${ post._id }" class="btn btn-primary">View Board</a>
+			    </div>
+			    <div class="card-footer">
+			      <small class="text-muted">${ post.condition }</small>
+			    </div>
+			  </div>
+			</div>
+		`)
+	});
+	// clear the current page numbers
+	$('ul.pagination').html('');
+	// build html string template
+	var paginateTemplate = ``;
+	// pull filter data from the form
+	var formData = $('#post-filter-form').serialize();
+	// check if location input filled out
+	var location = $('#location').val();
+	if(location) {
+		// add preexisting lat and lng values to formData query
+		formData += latLngQuery;	
+	};
+	// check if form is filled out
+	if (cleanForm === formData) formData = '';
+	// check if has_previous pages and add prev button
+	if (data.has_prev) {
+		// remove erroneous &page= from data.prevUrl
+		data.prevUrl = data.prevUrl.replace('post=', '');
+		paginateTemplate += `
+		<li class="page-item">
+			<a href="${ data.prevUrl }${ formData ? '&' + formData : '' }" class="page-link" aria-label="Previous">
+				<span aria-hidden="true">&laquo;</span>
+			</a>
+		</li>
+		`
+	}
+	// check is there are multiple pages and add page number buttons
+	if (data.pages.length > 1) {
+		data.pages.forEach(function(page) {
+			// remove erroneous &page= from page.url
+			page.url = page.url.replace('post=', '');
+			paginateTemplate += `<li class="page-item ${ page.number === data.pageNumber ? 'active' : '' }"><a href="${ page.url }${ formData ? '&' + formData : '' }" class="page-link">${ page.number }</a></li>`;
 		});
-		// clear the current page numbers
-		$('ul.pagination').html('');
-		// build html string template
-		var paginateTemplate = ``;
-		// pull filter data from the form
-		var formData = $('#post-filter-form').serialize();
-		// check if location input filled out
-		var location = $('#location').val();
-		if(location) {
-			// add preexisting lat and lng values to formData query
-			formData += latLngQuery;	
-		};
-		// check if form is filled out
-		if (cleanForm === formData) formData = '';
-		// check if has_previous pages and add prev button
-		if (data.has_prev) {
-			// remove erroneous &page= from data.prevUrl
-			data.prevUrl = data.prevUrl.replace('post=', '');
-			paginateTemplate += `
+	}
+	// check if has_next pages
+	if (data.has_next) {
+		// remove erroneous &page= from data.nextUrl
+		data.nextUrl = data.nextUrl.replace('post=', '');
+		// add next button to page numbers
+		paginateTemplate += `
 			<li class="page-item">
-				<a href="${ data.prevUrl }${ formData ? '&' + formData : '' }" class="page-link" aria-label="Previous">
-					<span aria-hidden="true">&laquo;</span>
+				<a href="${ data.nextUrl }${ formData ? '&' + formData : '' }" class="page-link" aria-label="Next">
+					<span aria-hidden="true">&raquo;</span>
 				</a>
 			</li>
 			`
-		}
-		// check is there are multiple pages and add page number buttons
-		if (data.pages.length > 1) {
-			data.pages.forEach(function(page) {
-				// remove erroneous &page= from page.url
-				page.url = page.url.replace('post=', '');
-				paginateTemplate += `<li class="page-item ${ page.number === data.pageNumber ? 'active' : '' }"><a href="${ page.url }${ formData ? '&' + formData : '' }" class="page-link">${ page.number }</a></li>`;
-			});
-		}
-		// check if has_next pages
-		if (data.has_next) {
-			// remove erroneous &page= from data.nextUrl
-			data.nextUrl = data.nextUrl.replace('post=', '');
-			// add next button to page numbers
-			paginateTemplate += `
-				<li class="page-item">
-					<a href="${ data.nextUrl }${ formData ? '&' + formData : '' }" class="page-link" aria-label="Next">
-						<span aria-hidden="true">&raquo;</span>
-					</a>
-				</li>
-				`
-		}
-		// if paginate buttons exist then add them to the DOM
-		if (paginateTemplate) $('ul.pagination').html(paginateTemplate);
-		// if posts exist then update map with visible posts
-		if(data.posts.length) {
-				// clear existing markers
-				markerCluster.clearMarkers();
-				// load post markers to map
-				loadMarkers(data.posts);
-		} else {
-				// no posts to load so remove all markers from map
-				markerCluster.clearMarkers();
-		}
-	};
+	}
+	// if paginate buttons exist then add them to the DOM
+	if (paginateTemplate) $('ul.pagination').html(paginateTemplate);
+	// if posts exist then update map with visible posts
+	if(data.posts.length) {
+			// clear existing markers
+			markerCluster.clearMarkers();
+			// load post markers to map
+			loadMarkers(data.posts);
+	} else {
+			// no posts to load so remove all markers from map
+			markerCluster.clearMarkers();
+	}
+};
 
-	// handle failed AJAX requests
-	function handleError(jqXHR, exception) {
-		alert(exception);
-	};
+// handle failed AJAX requests
+function handleError(jqXHR, exception) {
+	alert(exception);
+};
 
-	// listen for submit event on post filter form from /posts index
-	$('#post-filter-form').on('submit', formSubmit);
-	// add click listener for any pagination button clicks and submit query
-	$('ul.pagination').on('click', '.page-link', pageBtnClick);
-});
+// listen for submit event on post filter form from /posts index
+$('#post-filter-form').on('submit', formSubmit);
+// add click listener for any pagination button clicks and submit query
+$('ul.pagination').on('click', '.page-link', pageBtnClick);

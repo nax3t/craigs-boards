@@ -1,3 +1,5 @@
+initMap();
+
 function initMap() {
 	var map, infoWindow, geocoder, markerCluster, markers, loadMarkers, posts, latLngQuery;
 	// store clean form for comparison later
@@ -260,7 +262,4 @@ function initMap() {
 	function handleError(jqXHR, exception) {
 		alert(exception);
 	};
-
 }
-
-window.initMap = initMap;

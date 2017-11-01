@@ -81,6 +81,8 @@ module.exports = __webpack_require__(5);
 "use strict";
 
 
+initMap();
+
 function initMap() {
 	var map, infoWindow, geocoder, markerCluster, markers, loadMarkers, posts, latLngQuery;
 	// store clean form for comparison later
@@ -301,8 +303,6 @@ function initMap() {
 		alert(exception);
 	};
 }
-
-window.initMap = initMap;
 
 /***/ }),
 /* 2 */

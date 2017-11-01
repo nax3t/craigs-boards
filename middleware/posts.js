@@ -5,14 +5,19 @@ const { cloudinary } = require('../config/cloudinary');
 
 module.exports = {
 	index: async (req, res, next) => {
-		let posts, filters;
+		let posts, filters, query;
 		// check if filters exist
+		console.log(req.query);
 		if (req.query.post) filters = Object.values(req.query.post).join('') ? true : false;
-		// check if request sent with ajax and has filter(s)
-		if (req.xhr && filters) {
-				let { condition, price, location, longitude, latitude  } = req.query.post;
+		// check if request has filter(s)
+		if (filters) {
+				let { search, condition, price, location, longitude, latitude  } = req.query.post;
 				// build $and query array
-				let query = [];
+				query = [];
+				if (search) {
+					search = new RegExp(search, 'gi');
+					query.push({ $or: [ { title: search }, { description: search }, { location: search } ] });
+				}
 				if (condition) {
 					if (Array.isArray(condition)) condition = '(' + condition.join('?|') + '?)';
 					query.push({ condition: new RegExp(condition, 'gi') });
@@ -35,21 +40,14 @@ module.exports = {
 			    	} 
 			    });
 				}
-				posts = await Post.paginate({
-					$and: query
-				}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
-				// send back json with status of 200 (OK)
-				res.status(200).json({
-					posts: posts.docs,
-					pageNumber: posts.page, 
-					has_next: paginate.hasNextPages(req)(posts.pages),
-					has_prev: req.query.page > 1,
-					pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page),
-					nextUrl: paginate.href(req)(),
-					prevUrl: paginate.href(req)(true)
-				});
-		} else if (req.xhr && !filters) {
-				posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
+				query = { $and: query };
+		} else {
+				query = {};
+		}
+		
+		posts = await Post.paginate(query, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
+
+		if(req.xhr) {
 				// send back json with status of 200 (OK)
 				res.status(200).json({
 					posts: posts.docs,
@@ -61,8 +59,7 @@ module.exports = {
 					prevUrl: paginate.href(req)(true)
 				});
 		} else {
-				posts = await Post.paginate({}, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
-
+				// render index view
 			  res.render('posts/index', { 
 					title: 'Posts Index', 
 					page: 'posts', 

@@ -84,7 +84,7 @@ module.exports = __webpack_require__(5);
 initMap();
 
 function initMap() {
-	var map, infoWindow, geocoder, markerCluster, markers, loadMarkers, posts, latLngQuery;
+	var map, infoWindow, geocoder, markerCluster, markers, loadMarkers, latLngQuery;
 	// store clean form for comparison later
 	var cleanForm = $('#post-filter-form').serialize();
 
@@ -114,21 +114,24 @@ function initMap() {
 	};
 
 	window.loadMarkers = loadMarkers;
-
-	$.get('/posts').done(function (data) {
-		posts = data.posts;
-		geocoder = new google.maps.Geocoder();
-		window.geocoder = geocoder;
-		map = new google.maps.Map(document.getElementById('map'), {
-			zoom: 10,
-			center: new google.maps.LatLng(37.773972, -122.431297),
-			mapTypeId: 'terrain'
-		});
-		// load all post markers
-		loadMarkers(posts);
-		// Get user location
-		// getLocation();
+	geocoder = new google.maps.Geocoder();
+	window.geocoder = geocoder;
+	map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 10,
+		center: new google.maps.LatLng(37.773972, -122.431297),
+		mapTypeId: 'terrain'
 	});
+
+	if (!window.location.search && !posts) {
+		$.get('/posts').done(function (data) {
+			// load all post markers
+			loadMarkers(data.posts);
+			// Get user location - DISABLED for now
+			// getLocation();
+		});
+	} else {
+		loadMarkers(posts);
+	}
 
 	// listen for submit event on post filter form from /posts index
 	$('#post-filter-form').on('submit', formSubmit);

@@ -26,11 +26,15 @@ function initMap() {
 
 		markerCluster = new MarkerClusterer(map, markers,
             {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+		window.markerCluster = markerCluster;
 	}
+
+	window.loadMarkers = loadMarkers;
 
 	$.get('/posts').done(function(data) {
 		posts = data.posts;
 		geocoder = new google.maps.Geocoder();
+		window.geocoder = geocoder;
 		map = new google.maps.Map(document.getElementById('map'), {
 			zoom: 10,
 			center: new google.maps.LatLng(37.773972, -122.431297),
@@ -39,7 +43,7 @@ function initMap() {
 		// load all post markers
 		loadMarkers(posts);
 		// Get user location
-		getLocation();
+		// getLocation();
 	});
 
 	// listen for submit event on post filter form from /posts index

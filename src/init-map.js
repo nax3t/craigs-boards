@@ -1,6 +1,10 @@
-initMap();
+if (window.location.pathname === '/posts') {
+		initMapIndex();
+} else if (window.location.pathname.match(/\/posts\/([a-z0-9]){24}/)) {
+		initMapShow();
+}
 
-function initMap() {
+function initMapIndex() {
 	var map, infoWindow, geocoder, markerCluster, markers, loadMarkers, latLngQuery;
 	// store clean form for comparison later
 	var cleanForm = $('#post-filter-form').serialize();
@@ -34,7 +38,7 @@ function initMap() {
 	window.loadMarkers = loadMarkers;
 	geocoder = new google.maps.Geocoder();
 	window.geocoder = geocoder;
-	map = new google.maps.Map(document.getElementById('map'), {
+	map = new google.maps.Map(document.getElementById('index-map'), {
 		zoom: 10,
 		center: new google.maps.LatLng(37.773972, -122.431297),
 		mapTypeId: 'terrain'
@@ -265,4 +269,31 @@ function initMap() {
 	function handleError(jqXHR, exception) {
 		alert(exception);
 	};
+}
+
+function initMapShow() {
+  var lat = post.coordinates[1];
+  var lng = post.coordinates[0];
+  var center = {lat: lat, lng: lng };
+  var map = new google.maps.Map(document.getElementById('show-map'), {
+      zoom: 8,
+      center: center,
+      scrollwheel: false
+  });
+  var contentString = `
+    <p>
+      <strong>${ post.title }</strong><br>
+      <small>${ post.location }</small>
+    </p>
+  `
+  var infowindow = new google.maps.InfoWindow({
+    content: contentString
+  });
+  var marker = new google.maps.Marker({
+      position: center,
+      map: map
+  });
+  marker.addListener('click', function() {
+    infowindow.open(map, marker);
+  });
 }

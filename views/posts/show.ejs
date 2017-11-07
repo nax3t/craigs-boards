@@ -1,6 +1,4 @@
-<% layout('layouts/postsShow') -%>
-
-<% include ../partials/login-modal %>
+<% layout('layouts/boilerplate') -%>
 
 <div class="row">
 
@@ -12,7 +10,7 @@
 				<h3>$<%= post.price %>.00</h3>
 				<p><%= post.location %></p>
       </div>
-			<div id="map"></div>
+			<div id="show-map"></div>
     </div>
   </div>
   <!-- /.col-lg-3 -->
@@ -45,7 +43,7 @@
         <small class="text-muted">Posted by <%= comment.author.local.username || comment.author.facebook.name %> <%= moment(comment.createdAt).fromNow() %></small>
         <hr>
       	<% }); %>
-        <button class="btn btn-success" id="toggle-comment">Leave a comment</button>
+        <% if (currentUser) { %>
         <form action="/posts/<%= post.id %>/comments" class="mt-2" id="comment-form">
         	<div class="form-group">
         	  <label for="comment-body" class="sr-only">Body</label>
@@ -53,6 +51,7 @@
         	</div>
         	<button type="submit" class="btn btn-primary">Submit</button>
         </form>
+        <% } %>
       </div>
     </div>
     <!-- /.card -->
@@ -63,32 +62,5 @@
 </div>
 
 <script>
-	function initMap() {
-	  var lat = <%= post.coordinates[1] %>;
-	  var lng = <%= post.coordinates[0] %>;
-	  var center = {lat: lat, lng: lng };
-	  var map = new google.maps.Map(document.getElementById('map'), {
-	      zoom: 8,
-	      center: center,
-	      scrollwheel: false
-	  });
-	  var contentString = `
-	    <p>
-        <strong><%= post.title %></strong><br>
-        <small><%= post.location %></small>
-      </p>
-	  `
-	  var infowindow = new google.maps.InfoWindow({
-	    content: contentString
-	  });
-	  var marker = new google.maps.Marker({
-	      position: center,
-	      map: map
-	  });
-	  marker.addListener('click', function() {
-	    infowindow.open(map, marker);
-	  });
-	}
+  var post = <%- JSON.stringify(post) %>;
 </script>
-
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBkG51lwJtDvYFKTBdRZlhzYg1D4QFsXPU&callback=initMap"></script>

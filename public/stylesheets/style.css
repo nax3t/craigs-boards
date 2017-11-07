@@ -16,14 +16,9 @@ body {
 }
 
 /* Google Map styles */
-#map {
+#index-map, #show-map {
 	height: 300px;
 	width: 100%;
-}
-
-/* Hide comment form */
-#comment-form {
-	display: none;
 }
 
 /* Sticky Footer*/

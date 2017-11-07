@@ -97,7 +97,6 @@ module.exports = {
 			{
 			  path: 'comments',
 			  model: 'Comment',
-			  options: { sort: {'_id': '-1'} },
 			  populate: {
 			    path: 'author',
 			    model: 'User'

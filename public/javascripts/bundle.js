@@ -499,17 +499,13 @@ window.activatePlacesSearch = activatePlacesSearch;
 
 
 $('#comment-form').submit(function (e) {
-	debugger;
 	e.preventDefault();
 	var formData = $(this).serialize();
 	var url = $(this).attr('action');
 	$.post(url, formData).done(function (data) {
 		$('#comment-body').val('');
-		$('#comment-form').slideToggle('slow');
-		$('#comments').prepend('\n\t\t\t\t<p>' + data.comment.body + '</p>\n\t\t\t\t<small class="text-muted">Posted by ' + data.author + ' ' + moment(data.comment.createdAt).fromNow() + '</small>\n\t\t\t\t<hr>\t\t\n\t\t\t');
-		$('html, body').animate({ scrollTop: $('.delete-form').offset().top }, 600);
+		$('#comment-form').before('\n\t\t\t\t<p>' + data.comment.body + '</p>\n\t\t\t\t<small class="text-muted">Posted by ' + data.author + ' ' + moment(data.comment.createdAt).fromNow() + '</small>\n\t\t\t\t<hr>\t\t\n\t\t\t');
 	}).fail(function (jqXHR, exception) {
-		debugger;
 		alert(exception);
 	});
 });

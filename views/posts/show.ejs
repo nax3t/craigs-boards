@@ -39,9 +39,25 @@
       </div>
       <div class="card-body" id="comments">
       	<% post.comments.forEach(function(comment) { %>
-        <p><%- comment.body %></p>
-        <small class="text-muted">Posted by <%= comment.author.local.username || comment.author.facebook.name %> <%= moment(comment.createdAt).fromNow() %></small>
-        <hr>
+        <div class="row">
+          <div class="col-md-8">
+            <p><%- comment.body %></p>
+            <small class="text-muted">Posted by <%= comment.author.local.username || comment.author.facebook.name %> <%= moment(comment.createdAt).fromNow() %></small>
+          </div>
+          <div class="col-md-4">
+            <div class="float-md-right mt-2 mt-md-0">
+              <% if (currentUser && comment.author.equals(currentUser.id)) { %>
+              <button class="btn btn-sm btn-outline-warning edit-comment">Edit</button>
+              <form action="/posts/<%= post.id %>/comments/<%= comment.id %>" style="display: inline-block;" class="delete-comment">
+                <input type="submit" class="btn btn-sm btn-outline-danger" value="Delete">
+              </form>
+              <% } %>
+            </div>
+          </div>
+          <div class="col-md-12">
+            <hr>
+          </div>
+        </div>
       	<% }); %>
         <% if (currentUser) { %>
         <form action="/posts/<%= post.id %>/comments" class="mt-2" id="comment-form">

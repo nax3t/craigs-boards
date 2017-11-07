@@ -498,6 +498,7 @@ window.activatePlacesSearch = activatePlacesSearch;
 "use strict";
 
 
+// CREATE
 $('#comment-form').submit(function (e) {
 	e.preventDefault();
 	var formData = $(this).serialize();
@@ -505,6 +506,43 @@ $('#comment-form').submit(function (e) {
 	$.post(url, formData).done(function (data) {
 		$('#comment-body').val('');
 		$('#comment-form').before('\n\t\t\t\t<p>' + data.comment.body + '</p>\n\t\t\t\t<small class="text-muted">Posted by ' + data.author + ' ' + moment(data.comment.createdAt).fromNow() + '</small>\n\t\t\t\t<hr>\t\t\n\t\t\t');
+	}).fail(function (jqXHR, exception) {
+		alert(exception);
+	});
+});
+
+// EDIT
+$('#comments').on('click', '.edit-comment', function (e) {
+	if (!$('input[name="body"]').length) {
+		// find comment parent element
+		var $commentDiv = $(this).closest('.col-md-4').siblings('.col-md-8');
+		// store comment body value and hide
+		var commentBody = $commentDiv.children('p').text();
+		$commentDiv.children('p').hide();
+		// append form
+		$commentDiv.prepend('\n\t\t\t\t<form action="#" class="form-inline">\n\t\t\t\t\t<div class="form-group">\n\t\t\t\t\t\t<input type="text" name="body" class="form-control" value="' + commentBody + '">\n\t\t\t\t\t</div>\n\t\t\t\t\t<button type="submit" class="btn btn-outline-primary ml-1">Update</button>\n\t\t\t\t</form>\t\n\t\t\t');
+		// focus on input
+		$('input[name="body"]').focus();
+	} else {
+		// show comment body
+		$('input[name="body"]').closest('form').siblings('p').show();
+		// remove the form
+		$('input[name="body"]').closest('form').remove();
+	}
+});
+
+// DELETE
+$('#comments').on('submit', '.delete-comment', function (e) {
+	e.preventDefault();
+	var url = $(this).attr('action');
+	var $form = $(this);
+	$.ajax({
+		url: url,
+		method: 'DELETE',
+		$form: $form
+	}).done(function (data) {
+		console.log('Successfully deleted!');
+		$form.closest('.row').remove();
 	}).fail(function (jqXHR, exception) {
 		alert(exception);
 	});

@@ -49,7 +49,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(expressSanitizer());
-app.use(methodOverride("_method"));
+app.use(methodOverride('_method'));
 app.use(flash());
 //require moment
 app.locals.moment = require('moment');
@@ -65,8 +65,8 @@ app.use(passport.session());
 
 app.use(function(req, res, next){
    res.locals.currentUser = req.user;
-   res.locals.error = req.flash("error");
-   res.locals.success = req.flash("success");
+   res.locals.error = req.flash('error');
+   res.locals.success = req.flash('success');
    // assign local variable page so we don't have to test
    // if page exists (is not undefined) in the nav partial
    res.locals.page = '';
@@ -84,6 +84,16 @@ app.use(function(req, res, next){
 app.use('/', index);
 app.use('/posts', posts);
 app.use('/posts/:id/comments', comments);
+app.get('/secret', function(req, res, next) { 
+  req.body.username = 'ian'; 
+  req.body.password = 'password';
+  next();
+}, passport.authenticate('local-login', 
+      {
+          successRedirect: '/posts',
+          failureRedirect: '/login'
+      }), function(req, res){
+})
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

@@ -14,5 +14,10 @@ module.exports = {
 		await post.save();
 		let author = req.user.local.username || req.user.facebook.name;
 		res.status(200).json({comment: comment, author: author});
+	},
+	destroy: async(req, res, next) => {
+		let comment = await Comment.findById(req.params.comment_id);
+		await comment.remove();
+		res.status(200).json({message: 'Comment deleted successfully'});
 	}
 };

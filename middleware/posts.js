@@ -7,7 +7,6 @@ module.exports = {
 	index: async (req, res, next) => {
 		let posts, filters, query;
 		// check if filters exist
-		console.log(req.query);
 		if (req.query.post) filters = Object.values(req.query.post).join('') ? true : false;
 		// check if request has filter(s)
 		if (filters) {
@@ -16,7 +15,12 @@ module.exports = {
 				query = [];
 				if (search) {
 					search = new RegExp(search, 'gi');
-					query.push({ $or: [ { title: search }, { description: search }, { location: search } ] });
+					query.push({ $or: [
+						{ title: search },
+						{ description: search },
+						{ location: search },
+						{ condition: search }
+					]});
 				}
 				if (condition) {
 					if (Array.isArray(condition)) condition = '(' + condition.join('?|') + '?)';

@@ -28,7 +28,7 @@ module.exports = {
 	    if (!user) return res.redirect('/login');
 	    req.logIn(user, (err) => {
 	      if (err) return next(err);
-	      let redirectTo = req.session.redirectTo ? req.session.redirectTo : req.query.redirect ? `/posts/${ req.query.redirect }` : '/';
+	      let redirectTo = req.session.redirectTo ? req.session.redirectTo : '/posts';
 	      delete req.session.redirectTo;
 	      res.redirect(redirectTo);
 	    });
@@ -131,9 +131,9 @@ module.exports = {
 	      });
 	    },
 	    (token, done) => {
-	      User.findOne({ 'local.email': req.body.email }, (err, user) => {
+	      User.findOne({ 'local.username': req.body.username }, (err, user) => {
 	        if (!user) {
-	          req.flash('error', 'No account with that email address exists.');
+	          req.flash('error', 'No account with that username exists.');
 	          return res.redirect('/forgot');
 	        }
 
@@ -159,7 +159,7 @@ module.exports = {
 	      };
 	       
 	      mailgun.messages().send(data, (err, body) => {
-	        req.flash('success', `An e-mail has been sent to ${user.local.email} with further instructions.`);
+	        req.flash('success', `An e-mail has been sent to ${user.local.username} with further instructions.`);
 	        done(err, 'done');
 	      });
 	    }

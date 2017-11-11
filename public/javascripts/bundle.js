@@ -534,18 +534,21 @@ $('#comments').on('click', '.edit-comment', function (e) {
 // DELETE
 $('#comments').on('submit', '.delete-comment', function (e) {
 	e.preventDefault();
-	var url = $(this).attr('action');
-	var $form = $(this);
-	$.ajax({
-		url: url,
-		method: 'DELETE',
-		$form: $form
-	}).done(function (data) {
-		console.log('Successfully deleted!');
-		$form.closest('.row').remove();
-	}).fail(function (jqXHR, exception) {
-		alert(exception);
-	});
+	var response = confirm('Are you sure?');
+	if (response) {
+		var url = $(this).attr('action');
+		var $form = $(this);
+		$.ajax({
+			url: url,
+			method: 'DELETE',
+			$form: $form
+		}).done(function (data) {
+			console.log('Successfully deleted!');
+			$form.closest('.row').remove();
+		}).fail(function (jqXHR, exception) {
+			alert(exception);
+		});
+	}
 });
 
 /***/ })

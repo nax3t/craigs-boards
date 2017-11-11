@@ -24,7 +24,7 @@ const {
   postResetToken
 } = require('../middleware/users');
 
-router.get('/', asyncMiddleware(index));
+router.get('/', index);
 
 router.get('/signup', getSignup);
 

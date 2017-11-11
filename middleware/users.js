@@ -8,9 +8,8 @@ const passportConfig = require('../config/passport');
 passportConfig(passport);
 
 module.exports = {
-	index: async(req, res, next) => {
-	  let posts = await Post.find();
-	  res.render('index', { title: 'Board Maps', page: 'home', posts: posts });
+	index: (req, res) => {
+	  res.render('index', { title: 'Board Maps', page: 'home' });
 	},
 	getSignup: (req, res) => {
 	  res.render('users/signup', {title: 'User Sign-up', page: 'signup', username: '', email: ''});

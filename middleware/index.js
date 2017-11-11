@@ -15,19 +15,19 @@ module.exports = {
 	// route middleware to make sure a user is logged in
 	isLoggedIn: (req, res, next) => {
 	    // if user is authenticated in the session, carry on 
-	    if(req.isAuthenticated()) return next();
-	    // if request was sent via ajax then return json
-	    if(req.xhr) {
+	    if (req.isAuthenticated()) return next();
+	    // if request was sent via ajax then return json - is this needed?
+	    if (req.xhr) {
 	    	return res.json({'loginError': true});
 	    }
 	    // set redirectTo on session so user can go back to original destination after login
 	    req.session.redirectTo = req.originalUrl;
-	    // if they aren't redirect them to the login page
-	    req.flash('error', 'You need to be logged in to do that!');
+	    // if they aren't logged in then redirect them to the login page
+		  req.flash('error', 'You need to be logged in to do that!');
 	    res.redirect('/login');
 	},
 	sanitizeBody: (req, res, next) => {
-		if(req.body.post.description) {
+		if (req.body.post.description) {
 			req.body.post.description = req.sanitize(req.body.post.description);
 		}
 		next();
@@ -35,7 +35,7 @@ module.exports = {
 	checkPostOwner: async (req, res, next) => {
 		try {
 				let post = await Post.findById(req.params.id);
-				if(!post.author._id.equals(req.user._id)) {
+				if (!post.author._id.equals(req.user._id)) {
 					req.flash('error', 'You\'re not the owner of this post.');
 					return res.redirect('/');
 				}

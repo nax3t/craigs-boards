@@ -1,12 +1,44 @@
 <% layout('layouts/boilerplate') -%>
 
 <div class="jumbotron">
-  <h1 class="display-3">
-  	Welcome to <%= title %> <%= currentUser != undefined ? currentUser.local.username || currentUser.facebook.name : '' %>
-	</h1>
-  <p class="lead">Your one-stop-shop for all things surf boards</p>
-  <hr class="my-4">
-  <p class="lead">
-    <p><a class="btn btn-outline-primary btn-lg" href="/posts" role="button">Browse Boards &raquo;</a></p>
-  </p>
+	<div class="row">
+		<div class="<%= !currentUser ? 'col-md-8' : 'col-md-12' %>">
+		  <h1 class="<%= currentUser ? 'display-3' : 'display-4' %>">
+		  	Welcome to <%= title %> <%= currentUser != undefined ? currentUser.local.username || currentUser.facebook.name : '' %>
+			</h1>
+		  <p class="lead">Your one-stop-shop for all things surf boards</p>
+		  <hr class="my-4">
+		  <% if (currentUser) { %>
+		  <p class="lead">
+		    <p><a class="btn btn-outline-primary btn-lg" href="/posts" role="button">Browse Boards &raquo;</a></p>
+		  </p>
+		  <% } %>
+		</div>
+		<% if (!currentUser) { %>
+		<div class="col-md-4">
+		  <div class="form-auth">
+		    <form class="mb-3" action="/login" method="POST">
+		      <h2 class="form-auth-heading">Sign in</h2>
+		      <label for="inputUsername" class="sr-only">Username</label>
+		      <input type="text" id="inputUsername" class="form-control top" name="username" placeholder="Username" required autofocus>
+		      <label for="inputPassword" class="sr-only">Password</label>
+		      <input type="password" id="inputPassword" class="form-control bottom" name="password" placeholder="Password" required>
+
+		      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+		    </form>
+
+		    <div class="mb-3">
+		      <div><a href="/forgot">Forgot password?</a></div>
+		      <div>No account? <a href="/signup">Sign up</a></div>
+		    </div>
+
+		    <a href="/auth/facebook/login">
+		      <button class="btn btn-lg btn-primary">
+		        <i class="fa fa-facebook-official" aria-hidden="true"></i> Log in with Facebook
+		      </button>
+		    </a>
+		  </div>		
+		</div>
+		<% } %>
+	</div>
 </div>

@@ -47,8 +47,8 @@
           <div class="col-md-4">
             <div class="float-md-right mt-2 mt-md-0">
               <% if (currentUser && comment.author.equals(currentUser.id)) { %>
-              <button class="btn btn-sm btn-outline-warning edit-comment">Edit</button>
-              <form action="/posts/<%= post.id %>/comments/<%= comment.id %>" style="display: inline-block;" class="delete-comment">
+              <button class="btn btn-sm btn-outline-warning edit-comment" data-comment-id="<%= comment.id %>">Edit</button>
+              <form action="/posts/<%= post.id %>/comments/<%= comment.id %>" class="delete-comment">
                 <input type="submit" class="btn btn-sm btn-outline-danger" value="Delete">
               </form>
               <% } %>

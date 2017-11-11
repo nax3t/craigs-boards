@@ -13,6 +13,11 @@ module.exports = {
 		await post.comments.push(comment);
 		await post.save();
 		let author = req.user.local.username || req.user.facebook.name;
+		res.status(200).json({post: post, comment: comment, author: author});
+	},
+	update: async(req, res, next) => {
+		let comment = await Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, {new: true});
+		let author = req.user.local.username || req.user.facebook.name;
 		res.status(200).json({comment: comment, author: author});
 	},
 	destroy: async(req, res, next) => {

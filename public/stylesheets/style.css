@@ -37,6 +37,11 @@ body {
 	font-size: 1rem;
 }
 
+/* Delete Comment Form */
+.delete-comment {
+  display: inline-block;
+}
+
 /* Style form validation messages */
 .form-validation {
   color: red;

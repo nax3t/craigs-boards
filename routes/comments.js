@@ -1,12 +1,17 @@
 const express = require('express');
 const router  = express.Router({mergeParams: true});
 const { asyncMiddleware, isLoggedIn } = require('../middleware');
-const { create, destroy } = require('../middleware/comments');
+const { create, update, destroy } = require('../middleware/comments');
+
+router.use(isLoggedIn);
 
 // CREATE
-router.post('/', isLoggedIn, asyncMiddleware(create));
+router.post('/', asyncMiddleware(create));
+
+// UPDATE
+router.put('/:comment_id', asyncMiddleware(update));
 
 // DESTROY
-router.delete('/:comment_id', isLoggedIn, asyncMiddleware(destroy));
+router.delete('/:comment_id', asyncMiddleware(destroy));
 
 module.exports = router;

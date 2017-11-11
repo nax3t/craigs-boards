@@ -505,7 +505,7 @@ $('#comment-form').submit(function (e) {
 	var url = $(this).attr('action');
 	$.post(url, formData).done(function (data) {
 		$('#comment-body').val('');
-		$('#comment-form').before('\n\t\t\t\t<p>' + data.comment.body + '</p>\n\t\t\t\t<small class="text-muted">Posted by ' + data.author + ' ' + moment(data.comment.createdAt).fromNow() + '</small>\n\t\t\t\t<hr>\t\t\n\t\t\t');
+		$('#comment-form').before('\n\t\t\t\t<div class="row">\n\t\t\t\t\t<div class="col-md-8">\n\t\t\t\t\t  <p>' + data.comment.body + '</p>\n\t\t\t\t\t  <small class="text-muted">Posted by ' + data.author + ' ' + moment(data.comment.createdAt).fromNow() + '</small>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class="col-md-4">\n\t\t\t\t\t  <div class="float-md-right mt-2 mt-md-0">\n\t\t\t\t\t    <button class="btn btn-sm btn-outline-warning edit-comment" data-comment-id="' + data.comment._id + '">Edit</button>\n\t\t\t\t\t    <form action="/posts/' + data.post._id + '/comments/' + data.comment._id + '" class="delete-comment">\n\t\t\t\t\t      <input type="submit" class="btn btn-sm btn-outline-danger" value="Delete">\n\t\t\t\t\t    </form>\n\t\t\t\t\t  </div>\n\t\t\t\t\t</div>\n\t\t\t\t\t<div class="col-md-12">\n\t\t\t\t\t  <hr>\n\t\t\t\t\t</div>\n\t\t\t\t</div>\n\t\t\t');
 	}).fail(function (jqXHR, exception) {
 		alert(exception);
 	});
@@ -513,22 +513,44 @@ $('#comment-form').submit(function (e) {
 
 // EDIT
 $('#comments').on('click', '.edit-comment', function (e) {
-	if (!$('input[name="body"]').length) {
+	// toggle edit form
+	if (!$('input[name="comment[body]"]').length) {
 		// find comment parent element
 		var $commentDiv = $(this).closest('.col-md-4').siblings('.col-md-8');
 		// store comment body value and hide
 		var commentBody = $commentDiv.children('p').text();
 		$commentDiv.children('p').hide();
 		// append form
-		$commentDiv.prepend('\n\t\t\t\t<form action="#" class="form-inline">\n\t\t\t\t\t<div class="form-group">\n\t\t\t\t\t\t<input type="text" name="body" class="form-control" value="' + commentBody + '">\n\t\t\t\t\t</div>\n\t\t\t\t\t<button type="submit" class="btn btn-outline-primary ml-1">Update</button>\n\t\t\t\t</form>\t\n\t\t\t');
+		var action = $('#comment-form').attr('action');
+		var commentId = $(this).attr('data-comment-id');
+		$commentDiv.prepend('\n\t\t\t\t<form action="' + action + '/' + commentId + '" class="form-inline">\n\t\t\t\t\t<div class="form-group">\n\t\t\t\t\t\t<input type="text" name="comment[body]" class="form-control" value="' + commentBody + '">\n\t\t\t\t\t</div>\n\t\t\t\t\t<button type="submit" class="btn btn-outline-primary ml-1">Update</button>\n\t\t\t\t</form>\t\n\t\t\t');
 		// focus on input
-		$('input[name="body"]').focus();
+		$('input[name="comment[body]"]').focus();
 	} else {
 		// show comment body
-		$('input[name="body"]').closest('form').siblings('p').show();
+		$('input[name="comment[body]"]').closest('form').siblings('p').show();
 		// remove the form
-		$('input[name="body"]').closest('form').remove();
+		$('input[name="comment[body]"]').closest('form').remove();
 	}
+});
+
+// UPDATE
+$('#comments').on('submit', '.form-inline', function (e) {
+	e.preventDefault();
+	var url = $(this).attr('action');
+	var formData = $(this).serialize();
+	$.ajax({
+		url: url,
+		data: formData,
+		method: 'PUT'
+	}).done(function (data) {
+		// show comment body
+		$('input[name="comment[body]"]').closest('form').siblings('p').text(data.comment.body).show();
+		// remove the form
+		$('input[name="comment[body]"]').closest('form').remove();
+	}).fail(function (jqXHR, exception) {
+		alert(exception);
+	});
 });
 
 // DELETE

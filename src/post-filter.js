@@ -6,10 +6,14 @@ var latLngQuery;
 function formSubmit(e) {
 	// prevent default form submission behavior
 	e.preventDefault();
-	// if distance field is filled out then make sure location is also filled out
-	if($('#distance').val() && !$('#location').val()) {
-		$('#location').focus().after('<div class="form-validation">Location required if distance entered</div>');
-		$('.form-validation').delay(3000).fadeOut('slow');
+	// if distance radio is selected then make sure location is also filled out
+	if(($('#distance1').val() || $('#distance2').val() || $('#distance3').val()) && !$('#location').val()) {
+		if(!$('.form-validation').length) {
+			$('#location').focus().after('<div class="form-validation">Location required</div>');
+		}
+		$('.form-validation').delay(3000).fadeOut('slow', function() {
+			$(this).remove();
+		});
 		return;
 	}
 	// pull data from form body

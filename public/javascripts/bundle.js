@@ -137,10 +137,10 @@ function initMapIndex() {
 				loadMarkers(posts);
 		}
 
-		// listen for submit event on post filter form from /posts index
-		$('#post-filter-form').on('submit', formSubmit);
+		// listen for submit event on post filter form from /posts index // not using right now
+		// $('#post-filter-form').on('submit', formSubmit);
 		// add click listener for any pagination button clicks and submit query
-		$('ul.pagination').on('click', '.page-link', pageBtnClick);
+		// $('ul.pagination').on('click', '.page-link', pageBtnClick);
 
 		function getLocation() {
 				infoWindow = new google.maps.InfoWindow();
@@ -184,70 +184,78 @@ function initMapIndex() {
 				infoWindow.open(map);
 		}
 
-		// define function that handles filter form submission
-		function formSubmit(e) {
-				// prevent default form submission behavior
-				e.preventDefault();
-				// if distance field is filled out then make sure location is also filled out
-				if ($('#distance').val() && !$('#location').val()) {
-						$('#location').focus().after('<div class="form-validation">Location required if distance entered</div>');
-						$('.form-validation').delay(3000).fadeOut('slow');
-						return;
-				}
-				// pull data from form body
-				var formData = $(this).serialize();
-				// pull url from form action
-				var url = this.action;
-				// check for location
-				var location = $('#location').val();
-				if (location) {
-						// geocode location input value
-						geocoder.geocode({ 'address': location }, function (results, status) {
-								if (status == 'OK') {
-										// add lat and lng to query string
-										latLngQuery = '&post%5Blongitude%5D=' + results[0].geometry.location.lng() + '&post%5Blatitude%5D=' + results[0].geometry.location.lat();
-										formData += latLngQuery;
-										// submit GET request to form action with formData as query string
-										$.ajax({
-												url: url,
-												data: formData,
-												method: 'GET',
-												formData: formData
-										}).done(paintDom).fail(handleError);
-								} else {
-										alert('Geocode was not successful for the following reason: ' + status);
-								}
-						});
-				} else if (window.pos) {
-						// add lat and lng to query string
-						latLngQuery = '&post%5Blongitude%5D=' + window.pos.lng + '&post%5Blatitude%5D=' + window.pos.lat;
-						formData += latLngQuery;
-						// submit GET request to form action with formData as query string
-						$.ajax({
-								url: url,
-								data: formData,
-								method: 'GET',
-								formData: formData
-						}).done(paintDom).fail(handleError);
-				} else {
-						// submit GET request to form action with formData as query string
-						$.ajax({
-								url: url,
-								data: formData,
-								method: 'GET',
-								formData: formData
-						}).done(paintDom).fail(handleError);
-				}
-		};
+		// define function that handles filter form submission *Hasextra else if to handle window.pos
+		// function formSubmit(e) {
+		// 	// prevent default form submission behavior
+		// 	e.preventDefault();
+		// 	// if distance field is filled out then make sure location is also filled out
+		// 	if($('#distance').val() && !$('#location').val()) {
+		// 		$('#location').focus().after('<div class="form-validation">Location required if distance entered</div>');
+		// 		$('.form-validation').delay(3000).fadeOut('slow');
+		// 		return;
+		// 	}
+		// 	// pull data from form body
+		// 	var formData = $(this).serialize();
+		// 	// pull url from form action
+		// 	var url = this.action;
+		// 	// check for location
+		// 	var location = $('#location').val();
+		// 	if(location) {
+		// 			// geocode location input value
+		// 			geocoder.geocode( { 'address': location }, function(results, status) {
+		// 	      if (status == 'OK') {
+		// 	      		// add lat and lng to query string
+		// 	      		latLngQuery = `&post%5Blongitude%5D=${ results[0].geometry.location.lng() }&post%5Blatitude%5D=${ results[0].geometry.location.lat() }`;
+		// 	        	formData += latLngQuery;
+		// 						// submit GET request to form action with formData as query string
+		// 						$.ajax({
+		// 								url: url,
+		// 								data: formData,
+		// 								method: 'GET',
+		// 								formData: formData
+		// 							})
+		// 						  .done(paintDom)
+		// 				  		.fail(handleError);
+		// 	      } else {
+		// 	        	alert('Geocode was not successful for the following reason: ' + status);
+		// 	      }
+		// 	    });
+		// 	} else if (window.pos) {
+		//    		// add lat and lng to query string
+		//    		latLngQuery = `&post%5Blongitude%5D=${ window.pos.lng }&post%5Blatitude%5D=${ window.pos.lat }`;
+		//      	formData += latLngQuery;
+		// 			// submit GET request to form action with formData as query string
+		// 			$.ajax({
+		// 					url: url,
+		// 					data: formData,
+		// 					method: 'GET',
+		// 					formData: formData
+		// 				})
+		// 			  .done(paintDom)
+		// 	  		.fail(handleError);
+		// 	} else {
+		// 			// submit GET request to form action with formData as query string
+		// 			$.ajax({
+		// 					url: url,
+		// 					data: formData,
+		// 					method: 'GET',
+		// 					formData: formData
+		// 				})
+		// 			  .done(paintDom)
+		// 	  		.fail(handleError);
+		// 	}
+		// };
 
-		function pageBtnClick(e) {
-				// prevent form from submitting
-				e.preventDefault();
-				// pull url from link href
-				var url = $(this).attr('href');
-				// submit GET request to url
-				$.get(url).done(paintDom).fail(handleError);
-		};
+		// function pageBtnClick(e) {
+		// 	// prevent form from submitting
+		// 	e.preventDefault();
+		// 	// pull url from link href
+		// 	var url = $(this).attr('href')
+		// 	// submit GET request to url
+		// 	$.get(url)
+		// 	  .done(paintDom)
+		//  		.fail(handleError);
+		// };
 
 		function paintDom(data) {
 				// clear currently loaded posts
@@ -348,10 +356,14 @@ var latLngQuery;
 function formSubmit(e) {
 	// prevent default form submission behavior
 	e.preventDefault();
-	// if distance field is filled out then make sure location is also filled out
-	if ($('#distance').val() && !$('#location').val()) {
-		$('#location').focus().after('<div class="form-validation">Location required if distance entered</div>');
-		$('.form-validation').delay(3000).fadeOut('slow');
+	// if distance radio is selected then make sure location is also filled out
+	if (($('#distance1').val() || $('#distance2').val() || $('#distance3').val()) && !$('#location').val()) {
+		if (!$('.form-validation').length) {
+			$('#location').focus().after('<div class="form-validation">Location required</div>');
+		}
+		$('.form-validation').delay(3000).fadeOut('slow', function () {
+			$(this).remove();
+		});
 		return;
 	}
 	// pull data from form body

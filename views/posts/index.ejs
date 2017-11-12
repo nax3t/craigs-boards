@@ -32,8 +32,22 @@
 	    	<input type="text" class="form-control" id="location" name="post[location]" placeholder="Address or Zipcode">
 	    </div>
     	<div class="form-group">
-	    	<label for="distance">Distance</label>
-	    	<input type="number" class="form-control" id="distance" name="post[distance]" min="0" step="1" max="600" placeholder="Distance">
+	  		<p>Distance (miles)</p>
+	    	<div class="form-check form-check-inline">
+	    	  <label class="form-check-label">
+	    	    <input class="form-check-input" type="radio" name="post[distance]" id="distance1" value="25" checked> 25
+	    	  </label>
+	    	</div>
+	    	<div class="form-check form-check-inline">
+	    	  <label class="form-check-label">
+	    	    <input class="form-check-input" type="radio" name="post[distance]" id="distance2" value="50"> 50
+	    	  </label>
+	    	</div>
+	    	<div class="form-check form-check-inline">
+	    	  <label class="form-check-label">
+	    	    <input class="form-check-input" type="radio" name="post[distance]" id="distance3" value="100"> 100
+	    	  </label>
+	    	</div>
 	    </div>
 
     	<input type="submit" class="btn btn-outline-primary btn-block mb-3" role="button" value="Go!">

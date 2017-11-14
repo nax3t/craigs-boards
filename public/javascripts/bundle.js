@@ -130,8 +130,6 @@ function initMapIndex() {
 				$.get('/posts').done(function (data) {
 						// load all post markers
 						loadMarkers(data.posts);
-						// Get user location - DISABLED for now
-						// getLocation();
 				});
 		} else {
 				loadMarkers(posts);
@@ -143,6 +141,12 @@ function initMapIndex() {
 		// $('ul.pagination').on('click', '.page-link', pageBtnClick);
 
 		function getLocation() {
+				// clear location field in filter form and select 25mi radius
+				$('#location').val('');
+				$('#distance1').click();
+				// show loader animation
+				$('#loader').show();
+
 				infoWindow = new google.maps.InfoWindow();
 				// Try HTML5 geolocation.
 				// Note: This example requires that you consent to location sharing when
@@ -166,6 +170,8 @@ function initMapIndex() {
 
 								map.setCenter(pos);
 								map.setZoom(10);
+								// hide loader animation
+								$('#loader').hide();
 
 								// Update DOM with posts near user location
 								$.get('/posts?post%5Blongitude%5D=' + pos.lng + '&post%5Blatitude%5D=' + pos.lat).done(paintDom).fail(handleError);
@@ -184,7 +190,7 @@ function initMapIndex() {
 				infoWindow.open(map);
 		}
 
-		// define function that handles filter form submission *Hasextra else if to handle window.pos
+		// define function that handles filter form submission *Has extra else if to handle window.pos
 		// function formSubmit(e) {
 		// 	// prevent default form submission behavior
 		// 	e.preventDefault();
@@ -312,6 +318,9 @@ function initMapIndex() {
 						markerCluster.clearMarkers();
 				}
 		};
+
+		// get user location on link click from filter form
+		$('#use-my-location').on('click', getLocation);
 
 		// handle failed AJAX requests
 		function handleError(jqXHR, exception) {

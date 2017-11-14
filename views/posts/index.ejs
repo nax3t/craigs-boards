@@ -28,7 +28,7 @@
 	    	<input type="number" class="form-control" id="price" name="post[price]" min="0" step="1" placeholder="Price">
 	    </div>
     	<div class="form-group">
-	    	<label for="location">Location</label>
+	    	<label for="location">Location</label> <a href="#" id="use-my-location" class="float-right"><i class="fa fa-location-arrow" aria-hidden="true"></i> use my location</a>
 	    	<input type="text" class="form-control" id="location" name="post[location]" placeholder="Address or Zipcode">
 	    </div>
     	<div class="form-group">
@@ -57,7 +57,9 @@
   <!-- /.col-lg-3 -->
 	
 	<div class="col-lg-9">
-		<div id="index-map" class="mb-4 rounded"></div>
+		<div id="index-map" class="mb-4 rounded">
+		</div>
+    <div id="loader"></div>
 
 		<div class="row" id="posts-row">
 			<% posts.forEach((post) => { %>

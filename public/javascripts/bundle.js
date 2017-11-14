@@ -92,6 +92,9 @@ function initMapIndex() {
 		// store clean form for comparison later
 		var cleanForm = $('#post-filter-form').serialize();
 
+		// get user location on link click from filter form
+		$('#use-my-location').on('click', getLocation);
+
 		loadMarkers = function loadMarkers(posts) {
 				markers = [];
 				var bounds = new google.maps.LatLngBounds();
@@ -319,9 +322,6 @@ function initMapIndex() {
 				}
 		};
 
-		// get user location on link click from filter form
-		$('#use-my-location').on('click', getLocation);
-
 		// handle failed AJAX requests
 		function handleError(jqXHR, exception) {
 				alert(exception);
@@ -365,15 +365,18 @@ var latLngQuery;
 function formSubmit(e) {
 	// prevent default form submission behavior
 	e.preventDefault();
-	// if distance radio is selected then make sure location is also filled out
-	if (($('#distance1').val() || $('#distance2').val() || $('#distance3').val()) && !$('#location').val()) {
-		if (!$('.form-validation').length) {
-			$('#location').focus().after('<div class="form-validation">Location required</div>');
+	// if there's no user location (pos) on window object then validate distance & location
+	if (!window.pos) {
+		// if distance radio is selected then make sure location is also filled out
+		if (($('#distance1').val() || $('#distance2').val() || $('#distance3').val()) && !$('#location').val()) {
+			if (!$('.form-validation').length) {
+				$('#location').focus().after('<div class="form-validation">Location required</div>');
+			}
+			$('.form-validation').delay(3000).fadeOut('slow', function () {
+				$(this).remove();
+			});
+			return;
 		}
-		$('.form-validation').delay(3000).fadeOut('slow', function () {
-			$(this).remove();
-		});
-		return;
 	}
 	// pull data from form body
 	var formData = $(this).serialize();
@@ -381,7 +384,16 @@ function formSubmit(e) {
 	var url = this.action;
 	// check for location
 	var location = $('#location').val();
-	if (location) {
+	if (window.pos) {
+		latLngQuery = '&post%5Blongitude%5D=' + window.pos.lng + '&post%5Blatitude%5D=' + window.pos.lat;
+		formData += latLngQuery;
+		$.ajax({
+			url: url,
+			data: formData,
+			method: 'GET',
+			formData: formData
+		}).done(paintDom).fail(handleError);
+	} else if (location) {
 		// geocode location input value
 		geocoder.geocode({ 'address': location }, function (results, status) {
 			if (status == 'OK') {

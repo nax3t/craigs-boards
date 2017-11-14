@@ -9,6 +9,9 @@ function initMapIndex() {
 	// store clean form for comparison later
 	var cleanForm = $('#post-filter-form').serialize();
 
+	// get user location on link click from filter form
+	$('#use-my-location').on('click', getLocation);
+
 	loadMarkers = function(posts) {
 		markers = [];
 		var bounds = new google.maps.LatLngBounds();
@@ -64,7 +67,7 @@ function initMapIndex() {
 		$('#distance1').click();
 		// show loader animation
 		$('#loader').show();
-		
+
 		infoWindow = new google.maps.InfoWindow;
     // Try HTML5 geolocation.
 		// Note: This example requires that you consent to location sharing when
@@ -270,9 +273,6 @@ function initMapIndex() {
 				markerCluster.clearMarkers();
 		}
 	};
-
-	// get user location on link click from filter form
-	$('#use-my-location').on('click', getLocation);
 
 	// handle failed AJAX requests
 	function handleError(jqXHR, exception) {

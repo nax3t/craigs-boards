@@ -3,7 +3,6 @@ const path = require('path');
 module.exports = {
 	entry: [
 		'./src/init-map',
-		'./src/post-filter.js',
 		'./src/close-alerts.js',
 		'./src/activate-places-search.js',
 		'./src/comments.js'

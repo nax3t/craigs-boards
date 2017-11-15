@@ -80,7 +80,12 @@ module.exports = __webpack_require__(4);
 "use strict";
 
 
-var map, infoWindow, geocoder, markerCluster, latLngQuery;
+var map = void 0,
+    infoWindow = void 0,
+    geocoder = void 0,
+    markerCluster = void 0,
+    latLngQuery = void 0,
+    userLocation = void 0;
 // store clean form for comparison later in paintDom
 var cleanForm = $('#post-filter-form').serialize();
 
@@ -91,9 +96,7 @@ if (window.location.pathname === '/posts') {
 }
 
 function initMapIndex() {
-	window.loadMarkers = loadMarkers;
 	geocoder = new google.maps.Geocoder();
-	window.geocoder = geocoder;
 	map = new google.maps.Map(document.getElementById('index-map'), {
 		zoom: 10,
 		center: new google.maps.LatLng(37.773972, -122.431297),
@@ -145,8 +148,8 @@ function initMapShow() {
 function formSubmit(e) {
 	// prevent default form submission behavior
 	e.preventDefault();
-	// if there's no user location (pos) on window object then validate distance & location
-	if (!window.pos) {
+	// if there's no user location defned then validate distance & location
+	if (!userLocation) {
 		// if distance radio is selected then make sure location is also filled out
 		if (($('#distance1').val() || $('#distance2').val() || $('#distance3').val()) && !$('#location').val()) {
 			if (!$('.form-validation').length) {
@@ -164,8 +167,8 @@ function formSubmit(e) {
 	var url = this.action;
 	// check for location
 	var location = $('#location').val();
-	if (window.pos) {
-		latLngQuery = '&post%5Blongitude%5D=' + window.pos.lng + '&post%5Blatitude%5D=' + window.pos.lat;
+	if (userLocation) {
+		latLngQuery = '&post%5Blongitude%5D=' + userLocation.lng + '&post%5Blatitude%5D=' + userLocation.lat;
 		formData += latLngQuery;
 		$.ajax({
 			url: url,
@@ -230,8 +233,8 @@ function paintDom(data) {
 		// add preexisting lat and lng values to formData query
 		formData += latLngQuery;
 	};
-	if (window.pos) {
-		formData += '&post%5Blongitude%5D=' + pos.lng + '&post%5Blatitude%5D=' + pos.lat;
+	if (userLocation) {
+		formData += '&post%5Blongitude%5D=' + userLocation.lng + '&post%5Blatitude%5D=' + userLocation.lat;
 	}
 	// check if form is filled out
 	if (cleanForm === formData) formData = '';
@@ -289,27 +292,25 @@ function getLocation() {
 	// locate you.
 	if (navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function (position) {
-			var pos = {
+			userLocation = {
 				lat: position.coords.latitude,
 				lng: position.coords.longitude
 			};
-			// add pos variable coordinates to the window object (making them accessible via formSubmit callback)
-			window.pos = pos;
-			infoWindow.setPosition(pos);
+			infoWindow.setPosition(userLocation);
 			infoWindow.setContent('You are here.');
 			infoWindow.open(map);
 			window.setTimeout(function () {
 				infoWindow.close();
 			}, 3000);
 
-			map.setCenter(pos);
+			map.setCenter(userLocation);
 			map.setZoom(10);
 			// hide loader animation
 			$('#loader').hide();
 
 			var formData = '/posts?';
 			formData += $('#post-filter-form').serialize();
-			formData += '&post%5Blongitude%5D=' + pos.lng + '&post%5Blatitude%5D=' + pos.lat;
+			formData += '&post%5Blongitude%5D=' + userLocation.lng + '&post%5Blatitude%5D=' + userLocation.lat;
 			// Update DOM with posts near user location
 			$.get(formData).done(paintDom).fail(handleError);
 		}, function () {
@@ -349,7 +350,6 @@ function loadMarkers(posts) {
 	map.fitBounds(bounds);
 
 	markerCluster = new MarkerClusterer(map, markers, { imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m' });
-	window.markerCluster = markerCluster;
 };
 
 /***/ }),

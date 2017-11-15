@@ -30,6 +30,7 @@ module.exports = {
 	      if (err) return next(err);
 	      let redirectTo = req.session.redirectTo ? req.session.redirectTo : '/posts';
 	      delete req.session.redirectTo;
+	      req.flash('success', 'Welcome back!');
 	      res.redirect(redirectTo);
 	    });
 	  })(req, res, next);
@@ -73,12 +74,14 @@ module.exports = {
         callbackURL:`/auth/facebook/callback/${req.params.action}`,
         scope: 'email'
       }
-    )(req,res,next);
+    )(req, res, next);
 	},
 	getFbAuthCb: passport.authenticate('facebook', {
 	  callbackURL: '/auth/facebook/callback/login',
-	  successRedirect: '/',
-	  failureRedirect: '/login'
+	  successRedirect: '/posts',
+	  failureRedirect: '/login',
+	  successFlash: 'Welcome back!',
+	  failureFlash: 'Facebook login failed!'
   }),
   getConnectLocal: (req, res) => {
 	  res.render('users/connect-local', { message: req.flash('loginMessage') });

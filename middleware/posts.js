@@ -26,7 +26,8 @@ module.exports = {
 					if (Array.isArray(condition)) condition = '(' + condition.join('?|') + '?)';
 					query.push({ condition: new RegExp(condition, 'gi') });
 				}
-				if (price) query.push({ price: price });
+				if (price.min) query.push({ price: { $gte: price.min } });
+				if (price.max) query.push({ price: { $lte: price.max } });
 				if (longitude && latitude) {
 					// get the max distance or set it to 25 mi
 					let maxDistance = req.query.post.distance || 25;
@@ -44,9 +45,7 @@ module.exports = {
 			    	} 
 			    });
 				}
-				query = { $and: query };
-		} else {
-				query = {};
+				query = query.length ? { $and: query } : {};
 		}
 		
 		posts = await Post.paginate(query, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });

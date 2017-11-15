@@ -69,7 +69,7 @@ function formSubmit(e) {
 	// if there's no user location defned then validate distance & location
 	if(!userLocation) {
 		// if distance radio is selected then make sure location is also filled out
-		if(($('#distance1').val() || $('#distance2').val() || $('#distance3').val()) && !$('#location').val()) {
+		if(($('#distance1').is(':checked') || $('#distance2').is(':checked') || $('#distance3').is(':checked')) && !$('#location').val()) {
 			if(!$('.form-validation').length) {
 				$('#location').focus().after('<div class="form-validation">Location required</div>');
 			}
@@ -308,6 +308,9 @@ function loadMarkers(posts) {
 	}
 
 	map.fitBounds(bounds);
+	if (posts.length === 1) {
+			map.setZoom(10);
+	}
 
 	markerCluster = new MarkerClusterer(map, markers,
           {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});

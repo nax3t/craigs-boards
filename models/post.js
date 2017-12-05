@@ -7,6 +7,7 @@ const PostSchema = new Schema({
 	price: Number,
 	condition: String,
 	location: String,
+	category: String,
 	coordinates: {
 		type: [Number],  // [<longitude>, <latitude>]
 		index: '2d'      // create the geospatial index

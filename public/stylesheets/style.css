@@ -10,6 +10,11 @@ body {
   margin-bottom: 60px;
 }
 
+/* Hide distance options in filter form */
+#distance {
+  display: none;
+}
+
 /* Make delete forms inline-block */
 .delete-form {
 	display: inline-block;

@@ -114,6 +114,7 @@ module.exports = {
 	},
 	update: async (req, res, next) => {
 		// How to combine cb with async here to be DRY? - check this out for manual update -> https://coursework.vschool.io/mongoose-crud/
+		// what about deleting the original image? use public_id (need to use regex to extract from image url or store in db)
 		if(req.file) {
 				cloudinary.uploader.upload(req.file.path, async (result) => { 
 					req.body.post.image = result.secure_url;

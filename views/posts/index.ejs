@@ -9,17 +9,17 @@
     		<legend id="condition-legend">Condition</legend>
     		<div class="form-check form-check-inline">
     		  <label class="form-check-label">
-    		    <input class="form-check-input" type="checkbox" value="excellent" name="post[condition]"> Excellent
+    		    <input class="form-check-input" type="checkbox" value="excellent" name="post[condition]" checked> Excellent
     		  </label>
     		</div>
     		<div class="form-check form-check-inline">
     		  <label class="form-check-label">
-    		    <input class="form-check-input" type="checkbox" value="good" name="post[condition]"> Good
+    		    <input class="form-check-input" type="checkbox" value="good" name="post[condition]" checked> Good
     		  </label>
     		</div>
     		<div class="form-check form-check-inline">
     		  <label class="form-check-label">
-    		    <input class="form-check-input" type="checkbox" value="poor" name="post[condition]"> Poor
+    		    <input class="form-check-input" type="checkbox" value="poor" name="post[condition]" checked> Poor
     		  </label>
     		</div>
     	</fieldset>
@@ -37,10 +37,10 @@
 	    	</div>
 	    </div>
     	<div class="form-group">
-	    	<label for="location">Location</label> <a href="#" id="use-my-location" class="float-right"><i class="fa fa-location-arrow" aria-hidden="true"></i> use my location</a>
-	    	<input type="text" class="form-control" id="location" name="post[location]" placeholder="Address or Zipcode">
+	    	<label for="input-location">Location</label> <small class="float-right"><i class="fa fa-location-arrow" aria-hidden="true"></i> <a href="#" id="use-my-location">use my location</a></small>
+	    	<input type="text" class="form-control" id="input-location" name="post[location]" placeholder="Address or Zipcode">
 	    </div>
-    	<div class="form-group">
+    	<div class="form-group" id="distance">
 	  		<p>Distance (miles)</p>
 	    	<div class="form-check form-check-inline">
 	    	  <label class="form-check-label">
@@ -84,7 +84,8 @@
 			      <a href="/posts/<%= post.id %>" class="btn btn-outline-primary">View Board</a>
 			    </div>
 			    <div class="card-footer">
-			      <small class="text-muted"><%= post.condition %></small>
+			      <small class="text-muted float-left"><%= post.category %></small>
+			      <small class="text-muted float-right"><%= post.condition %></small>
 			    </div>
 			  </div>
 			</div>

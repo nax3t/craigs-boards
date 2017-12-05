@@ -3,4 +3,6 @@ const activatePlacesSearch = () => {
   let autocomplete = new google.maps.places.Autocomplete(input);
 }
 
-window.activatePlacesSearch = activatePlacesSearch;
+if (window.location.pathname === '/posts' || window.location.pathname === '/posts/new') {
+	activatePlacesSearch();
+}

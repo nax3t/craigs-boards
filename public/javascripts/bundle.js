@@ -118,6 +118,22 @@ function initMapIndex() {
 	$('ul.pagination').on('click', '.page-link', pageBtnClick);
 	// get user location on link click from filter form
 	$('#use-my-location').on('click', getLocation);
+	// listen for change on location and toggle distance
+	$('#input-location').on('input', toggleDistance);
+}
+
+function toggleDistance() {
+	if (this.value && !$('#distance').is(':visible')) {
+		$('#distance').slideDown('slow');
+		$('#distance1').prop('checked', true);
+	} else if (!this.value && $('#distance').is(':visible') && !userLocation) {
+		hideDistance();
+	}
+}
+
+function hideDistance() {
+	$('#distance').slideUp('slow');
+	$('#distance1, #distance2, #distance3').prop('checked', false);
 }
 
 function initMapShow() {
@@ -148,26 +164,13 @@ function initMapShow() {
 function formSubmit(e) {
 	// prevent default form submission behavior
 	e.preventDefault();
-	// if there's no user location defned then validate distance & location
-	if (!userLocation) {
-		// if distance radio is selected then make sure location is also filled out
-		if (($('#distance1').is(':checked') || $('#distance2').is(':checked') || $('#distance3').is(':checked')) && !$('#location').val()) {
-			if (!$('.form-validation').length) {
-				$('#location').focus().after('<div class="form-validation">Location required</div>');
-			}
-			$('.form-validation').delay(3000).fadeOut('slow', function () {
-				$(this).remove();
-			});
-			return;
-		}
-	}
 	// pull data from form body
 	var formData = $(this).serialize();
 	// pull url from form action
 	var url = this.action;
 	// check for location
-	var location = $('#location').val();
-	if (userLocation) {
+	var location = $('#input-location').val();
+	if (userLocation && !location) {
 		latLngQuery = '&post%5Blongitude%5D=' + userLocation.lng + '&post%5Blatitude%5D=' + userLocation.lat;
 		formData += latLngQuery;
 		$.ajax({
@@ -177,6 +180,10 @@ function formSubmit(e) {
 			formData: formData
 		}).done(paintDom).fail(handleError);
 	} else if (location) {
+		// select the 25mi range if none already checked
+		if (!($('#distance1').is(':checked') || $('#distance2').is(':checked') || $('#distance3').is(':checked'))) {
+			$('#distance1').prop('checked', true);
+		}
 		// geocode location input value
 		geocoder.geocode({ 'address': location }, function (results, status) {
 			if (status == 'OK') {
@@ -191,10 +198,12 @@ function formSubmit(e) {
 					formData: formData
 				}).done(paintDom).fail(handleError);
 			} else {
-				alert('Geocode was not successful for the following reason: ' + status);
+				flashError('Geocode was not successful for the following reason: ' + status);
 			}
 		});
 	} else {
+		// no location so remove any ranges
+		$('#distance1, #distance2, #distance3').prop('checked', false);
 		// submit GET request to form action with formData as query string
 		$.ajax({
 			url: url,
@@ -214,12 +223,24 @@ function pageBtnClick(e) {
 	$.get(url).done(paintDom).fail(handleError);
 };
 
+function flashError(message) {
+	$('#flash-message').append('<div class="alert alert-danger" role="alert">' + message + '</div>');
+	// fade out flash message after 3 seconds
+	window.setTimeout(function () {
+		$('.alert').fadeOut('slow');
+	}, 3000);
+}
+
 function paintDom(data) {
+	// if there are no posts to load them flash an error
+	if (!data.posts.length) {
+		flashError('No results available for that search');
+	}
 	// clear currently loaded posts
 	$('#posts-row').html('');
 	// loop over posts and append each to DOM
 	data.posts.forEach(function (post) {
-		$('#posts-row').append('\n\t\t\t<div class="col-lg-4 col-md-6 mb-4">\n\t\t\t  <div class="card h-100">\n\t\t\t    <a href="/posts/' + post._id + '"><img class="card-img-top" src="' + post.image + '" alt="' + post.title + '"></a>\n\t\t\t    <div class="card-body">\n\t\t\t      <h4 class="card-title">\n\t\t\t        <a href="/posts/' + post._id + '">' + post.title + '</a>\n\t\t\t      </h4>\n\t\t\t      <h5>$' + post.price + '.00</h5>\n\t\t\t      <p class="card-text">' + post.description.substring(0, 20) + (post.description.length > 20 ? '...' : '') + '</p>\n\t\t\t      <a href="/posts/' + post._id + '" class="btn btn-primary">View Board</a>\n\t\t\t    </div>\n\t\t\t    <div class="card-footer">\n\t\t\t      <small class="text-muted">' + post.condition + '</small>\n\t\t\t    </div>\n\t\t\t  </div>\n\t\t\t</div>\n\t\t');
+		$('#posts-row').append('\n\t\t\t<div class="col-lg-4 col-md-6 mb-4">\n\t\t\t  <div class="card h-100">\n\t\t\t    <a href="/posts/' + post._id + '"><img class="card-img-top" src="' + post.image + '" alt="' + post.title + '"></a>\n\t\t\t    <div class="card-body">\n\t\t\t      <h4 class="card-title">\n\t\t\t        <a href="/posts/' + post._id + '">' + post.title + '</a>\n\t\t\t      </h4>\n\t\t\t      <h5>$' + post.price + '.00</h5>\n\t\t\t      <p class="card-text">' + post.description.substring(0, 20) + (post.description.length > 20 ? '...' : '') + '</p>\n\t\t\t      <a href="/posts/' + post._id + '" class="btn btn-primary">View Board</a>\n\t\t\t    </div>\n\t\t\t    <div class="card-footer">\n\t\t\t\t    <small class="text-muted float-left">' + post.category + '</small>\n\t\t\t      <small class="text-muted float-right">' + post.condition + '</small>\n\t\t\t    </div>\n\t\t\t  </div>\n\t\t\t</div>\n\t\t');
 	});
 	// clear the current page numbers
 	$('ul.pagination').html('');
@@ -228,7 +249,7 @@ function paintDom(data) {
 	// pull filter data from the form
 	var formData = $('#post-filter-form').serialize();
 	// check if location input filled out
-	var location = $('#location').val();
+	var location = $('#input-location').val();
 	if (location) {
 		// add preexisting lat and lng values to formData query
 		formData += latLngQuery;
@@ -275,12 +296,22 @@ function paintDom(data) {
 
 // handle failed AJAX requests
 function handleError(jqXHR, exception) {
-	alert(exception);
+	flashError(exception);
 };
 
-function getLocation() {
+function getLocation(e) {
+	if (this.innerText !== 'use my location') {
+		this.innerText = 'use my location';
+		userLocation = null;
+		hideDistance();
+		return;
+	}
+	this.innerText = 'turn off my location';
+	// toggle distance options and select 25mi by default
+	$('#distance').slideDown('slow');
+	$('#distance1').prop('checked', true);
 	// clear location field in filter form
-	$('#location').val('');
+	$('#input-location').val('');
 	// show loader animation
 	$('#loader').show();
 
@@ -380,7 +411,9 @@ var activatePlacesSearch = function activatePlacesSearch() {
   var autocomplete = new google.maps.places.Autocomplete(input);
 };
 
-window.activatePlacesSearch = activatePlacesSearch;
+if (window.location.pathname === '/posts' || window.location.pathname === '/posts/new') {
+  activatePlacesSearch();
+}
 
 /***/ }),
 /* 4 */

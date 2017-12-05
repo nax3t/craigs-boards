@@ -31,6 +31,22 @@ function initMapIndex() {
 	$('ul.pagination').on('click', '.page-link', pageBtnClick);
 	// get user location on link click from filter form
 	$('#use-my-location').on('click', getLocation);
+	// listen for change on location and toggle distance
+	$('#input-location').on('input', toggleDistance);
+}
+
+function toggleDistance() {
+	if (this.value && !$('#distance').is(':visible')) {
+			$('#distance').slideDown('slow');
+			$('#distance1').prop('checked', true);
+	} else if (!this.value && $('#distance').is(':visible') && !userLocation) {
+			hideDistance();
+	}
+}
+
+function hideDistance() {
+	$('#distance').slideUp('slow');
+	$('#distance1, #distance2, #distance3').prop('checked', false);
 }
 
 function initMapShow() {
@@ -66,26 +82,13 @@ function initMapShow() {
 function formSubmit(e) {
 	// prevent default form submission behavior
 	e.preventDefault();
-	// if there's no user location defned then validate distance & location
-	if(!userLocation) {
-		// if distance radio is selected then make sure location is also filled out
-		if(($('#distance1').is(':checked') || $('#distance2').is(':checked') || $('#distance3').is(':checked')) && !$('#location').val()) {
-			if(!$('.form-validation').length) {
-				$('#location').focus().after('<div class="form-validation">Location required</div>');
-			}
-			$('.form-validation').delay(3000).fadeOut('slow', function() {
-				$(this).remove();
-			});
-			return;
-		}
-	}
 	// pull data from form body
 	let formData = $(this).serialize();
 	// pull url from form action
 	let url = this.action;
 	// check for location
-	let location = $('#location').val();
-	if(userLocation) {
+	let location = $('#input-location').val();
+	if (userLocation && !location) {
 			latLngQuery = `&post%5Blongitude%5D=${ userLocation.lng }&post%5Blatitude%5D=${ userLocation.lat }`;
 			formData += latLngQuery;
 			$.ajax({
@@ -97,6 +100,10 @@ function formSubmit(e) {
 			  .done(paintDom)
 	  		.fail(handleError);
 	} else if (location) {
+			// select the 25mi range if none already checked
+			if(!($('#distance1').is(':checked') || $('#distance2').is(':checked') || $('#distance3').is(':checked'))) {
+				$('#distance1').prop('checked', true);
+			}
 			// geocode location input value
 			geocoder.geocode( { 'address': location }, function(results, status) {
 	      if (status == 'OK') {
@@ -113,10 +120,12 @@ function formSubmit(e) {
 						  .done(paintDom)
 				  		.fail(handleError);
 	      } else {
-	        	alert('Geocode was not successful for the following reason: ' + status);
+	      	flashError('Geocode was not successful for the following reason: ' + status);
 	      }
 	    });
 	} else {
+			// no location so remove any ranges
+			$('#distance1, #distance2, #distance3').prop('checked', false);
 			// submit GET request to form action with formData as query string
 			$.ajax({
 					url: url,
@@ -140,7 +149,19 @@ function pageBtnClick(e) {
 		.fail(handleError);
 };
 
+function flashError(message) {
+	$('#flash-message').append(`<div class="alert alert-danger" role="alert">${ message }</div>`);
+	// fade out flash message after 3 seconds
+	window.setTimeout(function() { 
+		$('.alert').fadeOut('slow'); 
+	}, 3000);
+}
+
 function paintDom(data) {
+	// if there are no posts to load them flash an error
+	if (!data.posts.length) {
+		flashError('No results available for that search');
+	}
 	// clear currently loaded posts
 	$('#posts-row').html('');
 	// loop over posts and append each to DOM
@@ -158,7 +179,8 @@ function paintDom(data) {
 			      <a href="/posts/${ post._id }" class="btn btn-primary">View Board</a>
 			    </div>
 			    <div class="card-footer">
-			      <small class="text-muted">${ post.condition }</small>
+				    <small class="text-muted float-left">${ post.category }</small>
+			      <small class="text-muted float-right">${ post.condition }</small>
 			    </div>
 			  </div>
 			</div>
@@ -171,7 +193,7 @@ function paintDom(data) {
 	// pull filter data from the form
 	let formData = $('#post-filter-form').serialize();
 	// check if location input filled out
-	let location = $('#location').val();
+	let location = $('#input-location').val();
 	if(location) {
 		// add preexisting lat and lng values to formData query
 		formData += latLngQuery;	
@@ -230,12 +252,22 @@ function paintDom(data) {
 
 // handle failed AJAX requests
 function handleError(jqXHR, exception) {
-	alert(exception);
+	flashError(exception);
 };
 
-function getLocation() {
+function getLocation(e) {
+	if (this.innerText !== 'use my location') {
+		this.innerText = 'use my location';
+		userLocation = null;
+		hideDistance();
+		return;
+	}
+	this.innerText = 'turn off my location';
+	// toggle distance options and select 25mi by default
+	$('#distance').slideDown('slow');
+	$('#distance1').prop('checked', true);
 	// clear location field in filter form
-	$('#location').val('');
+	$('#input-location').val('');
 	// show loader animation
 	$('#loader').show();
 

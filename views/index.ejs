@@ -13,6 +13,40 @@
 		    <p><a class="btn btn-outline-primary btn-lg" href="/posts" role="button">Browse Boards &raquo;</a></p>
 		  </p>
 		  <% } %>
+		  <div class="row">
+		  	<div class="col-md-12">
+		  		<h3>Shop by Category</h3>
+		  		<p>
+		  			<a href="/posts?post%5Bcategory%5D=short">Short</a> |
+		  			<a href="/posts?post%5Bcategory%5D=long">Long</a> |
+		  			<a href="/posts?post%5Bcategory%5D=fish">Fish</a> |
+		  			<a href="/posts?post%5Bcategory%5D=gun">Gun</a> |
+		  			<a href="/posts?post%5Bcategory%5D=foam">Foam</a>
+		  		</p>
+		  	</div>
+		  	<div class="col-md-12">
+		  		<h3>Latest Boards</h3>
+		  	</div>
+				<% posts.forEach(function(post) { %>
+		  	<div class="col-md-3">
+					<div class="card h-100">
+					  <a href="/posts/<%= post.id %>"><img class="card-img-top" src="<%= post.image %>" alt="<%= post.title %>"></a>
+					  <div class="card-body">
+					    <h4 class="card-title">
+					      <a href="/posts/<%= post.id %>"><%= post.title %></a>
+					    </h4>
+					    <h5>$<%= post.price %>.00</h5>
+					    <p class="card-text"><%- post.description.substring(0, 20) %><%= post.description.length > 20 ? '...' : '' %></p>
+					    <a href="/posts/<%= post.id %>" class="btn btn-outline-primary">View Board</a>
+					  </div>
+					  <div class="card-footer">
+					    <small class="text-muted float-left"><%= post.category %></small>
+					    <small class="text-muted float-right"><%= post.condition %></small>
+					  </div>
+					</div>
+				</div>
+				<%}) %>
+		  </div>
 		</div>
 		<% if (!currentUser) { %>
 		<div class="col-md-4">

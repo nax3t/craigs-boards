@@ -38,7 +38,7 @@ body {
 }
 
 /* Fieldset legend font-size */
-#condition-legend {
+#condition-legend, #category-legend {
 	font-size: 1rem;
 }
 

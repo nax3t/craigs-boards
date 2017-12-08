@@ -23,6 +23,34 @@
     		  </label>
     		</div>
     	</fieldset>
+    	<fieldset>
+    		<legend id="category-legend">Category</legend>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="short" name="post[category]" <%= typeof category === 'undefined' ? 'checked' : category.includes('short') ? 'checked' : '' %>> Short
+    		  </label>
+    		</div>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="long" name="post[category]" <%= typeof category === 'undefined' ? 'checked' : category.includes('long') ? 'checked' : '' %>> Long
+    		  </label>
+    		</div>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="fish" name="post[category]" <%= typeof category === 'undefined' ? 'checked' : category.includes('fish') ? 'checked' : '' %>> Fish
+    		  </label>
+    		</div>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="gun" name="post[category]" <%= typeof category === 'undefined' ? 'checked' : category.includes('gun') ? 'checked' : '' %>> Gun
+    		  </label>
+    		</div>
+    		<div class="form-check form-check-inline">
+    		  <label class="form-check-label">
+    		    <input class="form-check-input" type="checkbox" value="foam" name="post[category]" <%= typeof category === 'undefined' ? 'checked' : category.includes('foam') ? 'checked' : '' %>> Foam
+    		  </label>
+    		</div>
+    	</fieldset>
     	<div class="form-group">
     		<p>Price</p>
     		<div class="row">

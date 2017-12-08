@@ -10,7 +10,7 @@ module.exports = {
 		if (req.query.post) filters = Object.values(req.query.post).join('') ? true : false;
 		// check if request has filter(s)
 		if (filters) {
-				let { search, condition, price, location, longitude, latitude  } = req.query.post;
+				let { search, condition, category, price, location, longitude, latitude  } = req.query.post;
 				// build $and query array
 				query = [];
 				if (search) {
@@ -26,8 +26,15 @@ module.exports = {
 					if (Array.isArray(condition)) condition = '(' + condition.join('?|') + '?)';
 					query.push({ condition: new RegExp(condition, 'gi') });
 				}
-				if (price.min) query.push({ price: { $gte: price.min } });
-				if (price.max) query.push({ price: { $lte: price.max } });
+				if (category) {
+					res.locals.category = category; // make category available in view
+					if (Array.isArray(category)) category = '(' + category.join('?|') + '?)';
+					query.push({ category: new RegExp(category, 'gi') });
+				}
+				if (price) {
+					if (price.min) query.push({ price: { $gte: price.min } });
+					if (price.max) query.push({ price: { $lte: price.max } });
+				}
 				if (longitude && latitude) {
 					// get the max distance or set it to 25 mi
 					let maxDistance = req.query.post.distance || 25;
@@ -70,7 +77,7 @@ module.exports = {
 					pageNumber: posts.page, 
 					pageCount: posts.pages,
 			    itemCount: posts.limit,
-			    pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page) 
+			    pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page)
 			  });
 		}
 	},

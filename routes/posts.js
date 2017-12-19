@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const { asyncMiddleware, isLoggedIn, sanitizeBody, checkPostOwner, findLocation } = require('../middleware');
-const { index, newPost, create, show, edit, update, destroy } = require('../middleware/posts');
+const { index, newPost, create, show, edit, update, destroy } = require('../controllers/posts');
 const { upload } = require('../config/cloudinary');
 const paginate = require('express-paginate');
 

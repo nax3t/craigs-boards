@@ -22,7 +22,7 @@ const {
   postForgot,
   getResetToken,
   postResetToken
-} = require('../middleware/users');
+} = require('../controllers/users');
 
 router.get('/', asyncMiddleware(index));
 

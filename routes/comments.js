@@ -1,7 +1,7 @@
 const express = require('express');
 const router  = express.Router({mergeParams: true});
 const { asyncMiddleware, isLoggedIn } = require('../middleware');
-const { create, update, destroy } = require('../middleware/comments');
+const { create, update, destroy } = require('../controllers/comments');
 
 router.use(isLoggedIn);
 

@@ -6,6 +6,10 @@ const { cloudinary } = require('../config/cloudinary');
 module.exports = {
 	index: async (req, res, next) => {
 		let posts, filters, query;
+		// define escapeRegex function for search feature
+		const escapeRegex = (text) => {
+		    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+		};
 		// check if filters exist
 		if (req.query.post) filters = Object.values(req.query.post).join('') ? true : false;
 		// check if request has filter(s)
@@ -14,12 +18,13 @@ module.exports = {
 				// build $and query array
 				query = [];
 				if (search) {
-					search = new RegExp(search, 'gi');
+					search = new RegExp(escapeRegex(search), 'gi');
 					query.push({ $or: [
 						{ title: search },
 						{ description: search },
 						{ location: search },
-						{ condition: search }
+						{ condition: search },
+						{ category: search }
 					]});
 				}
 				if (condition) {
@@ -54,7 +59,7 @@ module.exports = {
 				}
 				query = query.length ? { $and: query } : {};
 		}
-		
+
 		posts = await Post.paginate(query, { page: req.query.page, limit: req.query.limit, sort: { '_id': -1 } });
 
 		if(req.xhr) {
@@ -68,7 +73,7 @@ module.exports = {
 					nextUrl: paginate.href(req)(),
 					prevUrl: paginate.href(req)(true)
 				});
-		} else {
+		} else {		
 				// render index view
 			  res.render('posts/index', { 
 					title: 'Posts Index', 
@@ -77,7 +82,8 @@ module.exports = {
 					pageNumber: posts.page, 
 					pageCount: posts.pages,
 			    itemCount: posts.limit,
-			    pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page)
+			    pages: paginate.getArrayPages(req)(3, posts.pages, req.query.page),
+			    error: posts.total ? '' : 'No results available for that search'
 			  });
 		}
 	},

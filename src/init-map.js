@@ -2,13 +2,7 @@ let map, infoWindow, geocoder, markerCluster, latLngQuery, userLocation;
 // store clean form for comparison later in paintDom
 const cleanForm = $('#post-filter-form').serialize();
 
-if (window.location.pathname === '/posts') {
-		initMapIndex();
-} else if (window.location.pathname.match(/\/posts\/([a-z0-9]){24}/)) {
-		initMapShow();
-}
-
-function initMapIndex() {
+const initMapIndex = () => {
 	geocoder = new google.maps.Geocoder();
 	map = new google.maps.Map(document.getElementById('index-map'), {
 		zoom: 10,
@@ -17,7 +11,7 @@ function initMapIndex() {
 	});
 
 	if (!window.location.search && !posts) {
-			$.get('/posts').done(function(data) {
+			$.get('/posts').done(data => {
 				// load all post markers
 				loadMarkers(data.posts);
 			});
@@ -35,21 +29,21 @@ function initMapIndex() {
 	$('#input-location').on('input', toggleDistance);
 }
 
-function toggleDistance() {
-	if (this.value && !$('#distance').is(':visible')) {
+const toggleDistance = event => {
+	if (event.target.value && !$('#distance').is(':visible')) {
 			$('#distance').slideDown('slow');
 			$('#distance1').prop('checked', true);
-	} else if (!this.value && $('#distance').is(':visible') && !userLocation) {
+	} else if (!event.target.value && $('#distance').is(':visible') && !userLocation) {
 			hideDistance();
 	}
 }
 
-function hideDistance() {
+const hideDistance = () => {
 	$('#distance').slideUp('slow');
 	$('#distance1, #distance2, #distance3').prop('checked', false);
 }
 
-function initMapShow() {
+const initMapShow = () => {
   let lat = post.coordinates[1];
   let lng = post.coordinates[0];
   let center = {lat: lat, lng: lng };
@@ -71,7 +65,7 @@ function initMapShow() {
       position: center,
       map: map
   });
-  marker.addListener('click', function() {
+  marker.addListener('click', () => {
     infowindow.open(map, marker);
   });
 }
@@ -79,13 +73,13 @@ function initMapShow() {
 ////////////////////////// Functions to be used inside of initMapIndex
 
 // define function that handles filter form submission
-function formSubmit(e) {
+const formSubmit = event => {
 	// prevent default form submission behavior
-	e.preventDefault();
+	event.preventDefault();
 	// pull data from form body
-	let formData = $(this).serialize();
+	let formData = $(event.target).serialize();
 	// pull url from form action
-	let url = this.action;
+	let url = event.target.action;
 	// check for location
 	let location = $('#input-location').val();
 	if (userLocation && !location) {
@@ -105,7 +99,7 @@ function formSubmit(e) {
 				$('#distance1').prop('checked', true);
 			}
 			// geocode location input value
-			geocoder.geocode( { 'address': location }, function(results, status) {
+			geocoder.geocode({ 'address': location }, (results, status) => {
 	      if (status == 'OK') {
 	      		// add lat and lng to query string
 	      		latLngQuery = `&post%5Blongitude%5D=${ results[0].geometry.location.lng() }&post%5Blatitude%5D=${ results[0].geometry.location.lat() }`;
@@ -138,9 +132,9 @@ function formSubmit(e) {
 	}
 };
 
-function pageBtnClick(e) {
+function pageBtnClick(event) { // can't get this to work with event.target instead of this???
 	// prevent form from submitting
-	e.preventDefault();
+	event.preventDefault();
 	// pull url from link href
 	let url = $(this).attr('href')
 	// submit GET request to url
@@ -149,15 +143,15 @@ function pageBtnClick(e) {
 		.fail(handleError);
 };
 
-function flashError(message) {
+const flashError = message => {
 	$('#flash-message').append(`<div class="alert alert-danger" role="alert">${ message }</div>`);
 	// fade out flash message after 3 seconds
-	window.setTimeout(function() { 
+	window.setTimeout(() => { 
 		$('.alert').fadeOut('slow'); 
 	}, 3000);
 }
 
-function paintDom(data) {
+const paintDom = data => {
 	// if there are no posts to load them flash an error
 	if (!data.posts.length) {
 		flashError('No results available for that search');
@@ -165,7 +159,7 @@ function paintDom(data) {
 	// clear currently loaded posts
 	$('#posts-row').html('');
 	// loop over posts and append each to DOM
-	data.posts.forEach(function(post) {
+	data.posts.forEach(post => {
 		$('#posts-row').append(`
 			<div class="col-lg-4 col-md-6 mb-4">
 			  <div class="card h-100">
@@ -217,7 +211,7 @@ function paintDom(data) {
 	}
 	// check is there are multiple pages and add page number buttons
 	if (data.pages.length > 1) {
-		data.pages.forEach(function(page) {
+		data.pages.forEach(page => {
 			// remove erroneous &page= from page.url
 			page.url = page.url.replace('post=', '');
 			paginateTemplate += `<li class="page-item ${ page.number === data.pageNumber ? 'active' : '' }"><a href="${ page.url }${ formData ? '&' + formData : '' }" class="page-link">${ page.number }</a></li>`;
@@ -251,18 +245,18 @@ function paintDom(data) {
 };
 
 // handle failed AJAX requests
-function handleError(jqXHR, exception) {
+const handleError = (jqXHR, exception) => {
 	flashError(exception);
 };
 
-function getLocation(e) {
-	if (this.innerText !== 'use my location') {
-		this.innerText = 'use my location';
+const getLocation = event => {
+	if (event.target.innerText !== 'use my location') {
+		event.target.innerText = 'use my location';
 		userLocation = null;
 		hideDistance();
 		return;
 	}
-	this.innerText = 'turn off my location';
+	event.target.innerText = 'turn off my location';
 	// toggle distance options and select 25mi by default
 	$('#distance').slideDown('slow');
 	$('#distance1').prop('checked', true);
@@ -278,7 +272,7 @@ function getLocation(e) {
 	// failed.", it means you probably did not give permission for the browser to
 	// locate you.
   if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
+    navigator.geolocation.getCurrentPosition(position => {
       userLocation = {
         lat: position.coords.latitude,
         lng: position.coords.longitude
@@ -286,7 +280,7 @@ function getLocation(e) {
       infoWindow.setPosition(userLocation);
       infoWindow.setContent('You are here.');
       infoWindow.open(map);
-      window.setTimeout(function() {
+      window.setTimeout(() => {
       	infoWindow.close();
       }, 3000);
 
@@ -303,7 +297,7 @@ function getLocation(e) {
   		  .done(paintDom)
     		.fail(handleError);
 
-    }, function() {
+    }, () => {
       handleLocationError(true, infoWindow, map.getCenter());
     });
   } else {
@@ -312,7 +306,7 @@ function getLocation(e) {
   }
 };
 
-function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+const handleLocationError = (browserHasGeolocation, infoWindow, pos) => {
   infoWindow.setPosition(pos);
   infoWindow.setContent(browserHasGeolocation ?
                         'Error: The Geolocation service failed.' :
@@ -320,7 +314,7 @@ function handleLocationError(browserHasGeolocation, infoWindow, pos) {
   infoWindow.open(map);
 };
 
-function loadMarkers(posts) {
+const loadMarkers = posts => {
 	let markers = [];
 	let bounds = new google.maps.LatLngBounds();
 
@@ -328,7 +322,7 @@ function loadMarkers(posts) {
 	  let latLng = new google.maps.LatLng(posts[i].coordinates[1], posts[i].coordinates[0]);
 	  let marker = new google.maps.Marker({
       position: latLng,
-      label: posts[i].title,
+      // label: posts[i].title, // Removed this for now! Either remove completely or add back in later
       animation: google.maps.Animation.DROP,
       url: '/posts/' + posts[i]._id
     });
@@ -347,3 +341,9 @@ function loadMarkers(posts) {
 	markerCluster = new MarkerClusterer(map, markers,
           {imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
 };
+
+if (window.location.pathname === '/posts') {
+		initMapIndex();
+} else if (window.location.pathname.match(/\/posts\/([a-z0-9]){24}/)) {
+		initMapShow();
+}

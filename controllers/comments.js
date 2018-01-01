@@ -10,7 +10,7 @@ module.exports = {
 		req.body.comment.author = req.user._id;
 		req.body.comment.body = req.sanitize(req.body.comment.body);
 		let comment = await Comment.create(req.body.comment);
-		await post.comments.push(comment);
+		await post.comments.push(comment._id);
 		await post.save();
 		let author = req.user.local.username || req.user.facebook.name;
 		res.status(200).json({post: post, comment: comment, author: author});

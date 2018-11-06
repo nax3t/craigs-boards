@@ -34,7 +34,7 @@ mongoose.connect(databaseUri)
       .catch(err => console.log(`Database connection error: ${err.message}`));
 
 // Seed the database
-// seedDB();
+seedDB();
 
 // view engine and layout-templates setup
 app.engine('ejs', engine);

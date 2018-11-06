@@ -22,7 +22,7 @@ const seedDB = async () => {
 				try {
 						let random3 = Math.floor(Math.random() * 3);
 						let category = categories[Math.floor(Math.random() * 5)];
-						let image = category === 'Short' ? 'https://goo.gl/zsAmDJ' : 'Long' ? 'https://goo.gl/wcDZHj' : 'Fish' ? 'https://goo.gl/KYTqPo' : 'Gun' ? 'https://goo.gl/Sm1Rjo' : 'https://goo.gl/AMLyNK';
+						let image = category === 'Short' ? '/images/short.jpg' : 'Long' ? '/images/long.jpg' : 'Fish' ? '/images/fish.jpeg' : 'Gun' ? '/images/gun.jpeg' : '/images/foam.jpeg';
 						let random1000 = Math.floor(Math.random() * 1000);
 						let postData = {
 							title: faker.lorem.word(),
